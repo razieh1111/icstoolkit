@@ -60,7 +60,10 @@ const EvaluationChecklists: React.FC = () => {
         const subStrategy = allStrategies.flatMap(s => s.subStrategies).find(ss => ss.id === subStrategyId);
         if (subStrategy) {
           const guidelineEvals = subStrategy.guidelines.map(g => conceptData.guidelines[g.id] || 'N/A');
-          conceptData.subStrategies[subStrategyId] = calculateAggregateEvaluation(guidelineEvals);
+          // Only update if the sub-strategy is not 7.7 or 7.8 (which are now directly editable)
+          if (subStrategyId !== '7.7' && subStrategyId !== '7.8') {
+            conceptData.subStrategies[subStrategyId] = calculateAggregateEvaluation(guidelineEvals);
+          }
         }
       }
 
@@ -68,7 +71,14 @@ const EvaluationChecklists: React.FC = () => {
         const strategyId = id.split('.')[0]; // e.g., "1.1" -> "1"
         const strategy = allStrategies.find(s => s.id === strategyId);
         if (strategy) {
-          const subStrategyEvals = strategy.subStrategies.map(ss => conceptData.subStrategies[ss.id] || 'N/A');
+          // For Detailed level, calculate strategy average from sub-strategies,
+          // taking into account that 7.7 and 7.8 might be directly set.
+          const subStrategyEvals = strategy.subStrategies.map(ss => {
+            if (conceptData.level === 'Detailed' && (ss.id === '7.7' || ss.id === '7.8')) {
+              return conceptData.subStrategies[ss.id] || 'N/A'; // Use directly set value for 7.7/7.8
+            }
+            return conceptData.subStrategies[ss.id] || 'N/A';
+          });
           conceptData.strategies[strategyId] = calculateAggregateEvaluation(subStrategyEvals);
         }
       }
@@ -285,6 +295,10 @@ const EvaluationChecklists: React.FC = () => {
                 </h3>
                 {(() => {
                   const subStrategyEvals = currentStrategy.subStrategies.map(ss => {
+                    // For 7.7 and 7.8, use their directly set value if in Detailed mode
+                    if (ss.id === '7.7' || ss.id === '7.8') {
+                      return evaluationChecklists[selectedConcept]?.subStrategies[ss.id] || 'N/A';
+                    }
                     const guidelineEvals = ss.guidelines.map(g => evaluationChecklists[selectedConcept]?.guidelines[g.id] || 'N/A');
                     return calculateAggregateEvaluation(guidelineEvals);
                   });
@@ -302,19 +316,21 @@ const EvaluationChecklists: React.FC = () => {
               <div className="space-y-8">
                 {currentStrategy.subStrategies.map(subStrategy => (
                   <div key={subStrategy.id} className="border-t pt-6 first:border-t-0 first:pt-0">
-                    {/* Sub-strategy Header with calculated average */}
+                    {/* Sub-strategy Header with calculated average or editable selector for 7.7/7.8 */}
                     <div className="flex justify-between items-center mb-4">
                       <h4 className="text-xl font-palanquin font-medium text-app-header">
                         {subStrategy.id}. {subStrategy.name}
                       </h4>
                       {(() => {
+                        const isEditable = (subStrategy.id === '7.7' || subStrategy.id === '7.8');
                         const guidelineEvals = subStrategy.guidelines.map(g => evaluationChecklists[selectedConcept]?.guidelines[g.id] || 'N/A');
                         const calculatedSubStrategyAverage = calculateAggregateEvaluation(guidelineEvals);
+                        
                         return renderEvaluationSelectors(
                           'subStrategy',
                           subStrategy.id,
-                          calculatedSubStrategyAverage,
-                          true // Disabled, as it's calculated
+                          isEditable ? (evaluationChecklists[selectedConcept]?.subStrategies[subStrategy.id] || 'N/A') : calculatedSubStrategyAverage,
+                          !isEditable // Disabled if not editable (i.e., not 7.7 or 7.8)
                         );
                       })()}
                     </div>
