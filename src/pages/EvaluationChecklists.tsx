@@ -107,13 +107,15 @@ const EvaluationChecklists: React.FC = () => {
     type: 'strategy' | 'subStrategy' | 'guideline',
     id: string,
     name: string,
-    currentValue: EvaluationLevel
+    currentValue: EvaluationLevel,
+    disabled: boolean = false
   ) => (
     <div className="flex items-center gap-4">
-      <Label className="min-w-[150px] text-app-body-text">{name}</Label>
+      {name && <Label className="min-w-[150px] text-app-body-text">{name}</Label>}
       <Select
         value={currentValue}
         onValueChange={(value: EvaluationLevel) => handleEvaluationChange(type, id, value)}
+        disabled={disabled}
       >
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Select Level" />
@@ -201,7 +203,53 @@ const EvaluationChecklists: React.FC = () => {
             </div>
           ))}
         </div>
-      ) : (
+      ) : currentChecklistLevel === 'Normal' ? (
+        <div className="space-y-8 mt-6 pt-4">
+          {filteredStrategies.map((strategy) => {
+            // Calculate average for strategy based on its sub-strategies
+            const subStrategyEvals = strategy.subStrategies.map(ss => 
+              evaluationChecklists[selectedConcept]?.subStrategies[ss.id] || 'N/A'
+            );
+            const calculatedStrategyAverage = calculateAggregateEvaluation(subStrategyEvals);
+
+            return (
+              <div key={strategy.id} className="border-t pt-6 first:border-t-0 first:pt-0">
+                <div className="flex flex-col mb-4">
+                  {/* Strategy Header with calculated average */}
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="text-xl font-palanquin font-semibold text-app-header">
+                      {strategy.id}. {strategy.name}
+                    </h3>
+                    {renderEvaluationSelectors(
+                      'strategy',
+                      strategy.id,
+                      '', // No label, as the h3 is the label
+                      calculatedStrategyAverage,
+                      true // Disabled, as it's calculated
+                    )}
+                  </div>
+                  {/* Sub-strategies with their own selectors */}
+                  <div className="pl-4 space-y-2">
+                    {strategy.subStrategies.map(subStrategy => (
+                      <div key={subStrategy.id} className="flex justify-between items-center">
+                        <h4 className="text-lg font-palanquin font-medium text-app-body-text">
+                          {subStrategy.id}. {subStrategy.name}
+                        </h4>
+                        {renderEvaluationSelectors(
+                          'subStrategy',
+                          subStrategy.id,
+                          '', // No label, as the h4 is the label
+                          evaluationChecklists[selectedConcept]?.subStrategies[subStrategy.id] || 'N/A'
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : ( // Existing Tabs for Detailed level
         <Tabs value={selectedStrategyTab} onValueChange={setSelectedStrategyTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 h-auto p-2 items-stretch">
             {filteredStrategies.map((strategy) => (
