@@ -22,7 +22,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-app-body-text font-roboto">
+    <div className="min-h-screen flex flex-col bg-app-page-background text-app-body-text font-roboto">
       <header className="bg-app-header text-white p-4 shadow-md">
         <div className="container mx-auto flex flex-col md:flex-row items-center md:justify-between">
           <Link to="/" className="text-2xl font-palanquin font-semibold text-app-accent text-center md:text-left mb-2 md:mb-0">
