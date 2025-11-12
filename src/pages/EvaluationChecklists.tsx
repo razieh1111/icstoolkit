@@ -127,15 +127,15 @@ const EvaluationChecklists: React.FC = () => {
   const currentStrategy = useMemo(() => strategies.find(s => s.id === selectedStrategyTab), [strategies, selectedStrategyTab]);
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md relative min-h-[calc(100vh-200px)]">
-      <h2 className="text-3xl font-bold text-app-header mb-6">Evaluation of the Implementation of Life Cycle Design Strategies</h2>
+    <div className="p-6 bg-white rounded-lg shadow-md relative min-h-[calc(100vh-200px)] font-roboto">
+      <h2 className="text-3xl font-palanquin font-bold text-app-header mb-6">Evaluation of the Implementation of Life Cycle Design Strategies</h2>
       <p className="text-app-body-text mb-4">
         Evaluate how much each strategy, sub-strategy, and guideline has been pursued for Concept {selectedConcept}.
       </p>
 
       <div className="flex flex-col md:flex-row gap-8 mb-8">
         <div className="flex-1">
-          <h3 className="text-xl font-semibold text-app-header mb-3">Select Checklist Level:</h3>
+          <h3 className="text-xl font-palanquin font-semibold text-app-header mb-3">Select Checklist Level:</h3>
           <RadioGroup
             value={currentChecklistLevel}
             onValueChange={(value: ChecklistLevel) => handleChecklistLevelChange(value)}
@@ -157,7 +157,7 @@ const EvaluationChecklists: React.FC = () => {
         </div>
 
         <div className="flex-1">
-          <h3 className="text-xl font-semibold text-app-header mb-3">Select Concept:</h3>
+          <h3 className="text-xl font-palanquin font-semibold text-app-header mb-3">Select Concept:</h3>
           <RadioGroup
             value={selectedConcept}
             onValueChange={(value: ConceptType) => setSelectedConcept(value)}
@@ -178,18 +178,18 @@ const EvaluationChecklists: React.FC = () => {
       <Tabs value={selectedStrategyTab} onValueChange={setSelectedStrategyTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7">
           {strategies.map((strategy) => (
-            <TabsTrigger key={strategy.id} value={strategy.id} className="whitespace-normal h-auto">
+            <TabsTrigger key={strategy.id} value={strategy.id} className="whitespace-normal h-auto font-roboto-condensed">
               {strategy.id}. {strategy.name}
             </TabsTrigger>
           ))}
         </TabsList>
         {currentStrategy && (
           <TabsContent value={currentStrategy.id} className="mt-6">
-            <h3 className="text-2xl font-semibold text-app-header mb-4">{currentStrategy.id}. {currentStrategy.name}</h3>
+            <h3 className="text-2xl font-palanquin font-semibold text-app-header mb-4">{currentStrategy.id}. {currentStrategy.name}</h3>
 
             {/* Strategy Level Evaluation */}
             <div className="mb-6 p-4 border rounded-md bg-gray-50">
-              <h4 className="text-xl font-medium text-app-header mb-3">Strategy Evaluation:</h4>
+              <h4 className="text-xl font-palanquin font-medium text-app-header mb-3">Strategy Evaluation:</h4>
               {renderEvaluationSelectors(
                 'strategy',
                 currentStrategy.id,
@@ -201,7 +201,7 @@ const EvaluationChecklists: React.FC = () => {
             {/* Sub-strategy Level Evaluation */}
             {(currentChecklistLevel === 'Normal' || currentChecklistLevel === 'Detailed') && (
               <div className="mb-6 p-4 border rounded-md bg-gray-50">
-                <h4 className="text-xl font-medium text-app-header mb-3">Sub-strategy Evaluation:</h4>
+                <h4 className="text-xl font-palanquin font-medium text-app-header mb-3">Sub-strategy Evaluation:</h4>
                 <div className="space-y-4">
                   {currentStrategy.subStrategies.map(subStrategy => (
                     <div key={subStrategy.id} className={cn(
@@ -223,11 +223,11 @@ const EvaluationChecklists: React.FC = () => {
             {/* Guideline Level Evaluation */}
             {currentChecklistLevel === 'Detailed' && (
               <div className="mb-6 p-4 border rounded-md bg-gray-50">
-                <h4 className="text-xl font-medium text-app-header mb-3">Guideline Evaluation:</h4>
+                <h4 className="text-xl font-palanquin font-medium text-app-header mb-3">Guideline Evaluation:</h4>
                 <div className="space-y-4">
                   {currentStrategy.subStrategies.map(subStrategy => (
                     <div key={subStrategy.id} className="pl-4">
-                      <h5 className="text-lg font-medium text-app-body-text mb-2">{subStrategy.id}. {subStrategy.name}</h5>
+                      <h5 className="text-lg font-palanquin font-medium text-app-body-text mb-2">{subStrategy.id}. {subStrategy.name}</h5>
                       <div className="space-y-2 pl-4">
                         {subStrategy.guidelines.map(guideline => (
                           <div key={guideline.id}>

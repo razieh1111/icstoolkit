@@ -82,15 +82,15 @@ const EvaluationRadar: React.FC = () => {
   }));
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md relative min-h-[calc(100vh-200px)]">
-      <h2 className="text-3xl font-bold text-app-header mb-6">Evaluation Radar</h2>
+    <div className="p-6 bg-white rounded-lg shadow-md relative min-h-[calc(100vh-200px)] font-roboto">
+      <h2 className="text-3xl font-palanquin font-bold text-app-header mb-6">Evaluation Radar</h2>
       <p className="text-app-body-text mb-4">
         This radar chart displays the pursuit level of each of the 7 strategies for Concept A and B,
         based on your evaluations in the "Evaluation Checklists" section.
       </p>
 
       <div className="mb-8">
-        <h3 className="text-xl font-semibold text-app-header mb-3">Select Concept to Highlight:</h3>
+        <h3 className="text-xl font-palanquin font-semibold text-app-header mb-3">Select Concept to Highlight:</h3>
         <RadioGroup
           value={selectedConcept}
           onValueChange={(value: 'A' | 'B') => setSelectedConcept(value)}
@@ -112,8 +112,8 @@ const EvaluationRadar: React.FC = () => {
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
               <PolarGrid stroke="#e0e0e0" />
-              <PolarAngleAxis dataKey="strategyName" stroke="#333" tick={{ fill: '#333', fontSize: 12 }} />
-              <PolarRadiusAxis angle={90} domain={[0, 4]} tickCount={5} stroke="#333" tick={{ fill: '#333', fontSize: 10 }} />
+              <PolarAngleAxis dataKey="strategyName" stroke="#333" tick={{ fill: '#333', fontSize: 12, fontFamily: 'Roboto Condensed' }} />
+              <PolarRadiusAxis angle={90} domain={[0, 4]} tickCount={5} stroke="#333" tick={{ fill: '#333', fontSize: 10, fontFamily: 'Roboto' }} />
               <Radar name="Concept A" dataKey="A" stroke="#003366" fill="#003366" fillOpacity={0.6} />
               <Radar name="Concept B" dataKey="B" stroke="#ff8c00" fill="#ff8c00" fillOpacity={0.6} />
               <Legend />

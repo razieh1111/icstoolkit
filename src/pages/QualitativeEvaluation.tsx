@@ -63,8 +63,8 @@ const QualitativeEvaluation: React.FC = () => {
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md relative min-h-[calc(100vh-200px)]">
-      <h2 className="text-3xl font-bold text-app-header mb-6">Qualitative Evaluation of Existing Products/Systems and Strategic Priorities</h2>
+    <div className="p-6 bg-white rounded-lg shadow-md relative min-h-[calc(100vh-200px)] font-roboto">
+      <h2 className="text-3xl font-palanquin font-bold text-app-header mb-6">Qualitative Evaluation of Existing Products/Systems and Strategic Priorities</h2>
       <p className="text-app-body-text mb-8">
         Define the priority level for each LCD strategy and sub-strategy, and answer guiding questions to elaborate on your choices.
       </p>
@@ -72,16 +72,16 @@ const QualitativeEvaluation: React.FC = () => {
       <Tabs defaultValue={strategies[0]?.id || "no-strategies"} className="w-full">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7">
           {strategies.map((strategy) => (
-            <TabsTrigger key={strategy.id} value={strategy.id} className="whitespace-normal h-auto">
+            <TabsTrigger key={strategy.id} value={strategy.id} className="whitespace-normal h-auto font-roboto-condensed">
               {strategy.id}. {strategy.name}
             </TabsTrigger>
           ))}
         </TabsList>
         {strategies.map((strategy) => (
           <TabsContent key={strategy.id} value={strategy.id} className="mt-6">
-            <h3 className="text-2xl font-semibold text-app-header mb-4">{strategy.id}. {strategy.name}</h3>
+            <h3 className="text-2xl font-palanquin font-bold text-app-header mb-4">{strategy.id}. {strategy.name}</h3>
             <div className="flex items-center gap-4 mb-8">
-              <Label htmlFor={`strategy-priority-${strategy.id}`} className="text-app-body-text min-w-[100px]">Strategy Priority:</Label>
+              <Label htmlFor={`strategy-priority-${strategy.id}`} className="text-app-body-text">Strategy Priority:</Label>
               <Select
                 value={qualitativeEvaluation[strategy.id]?.priority || 'None'}
                 onValueChange={(value: PriorityLevel) => setQualitativeEvaluation(prev => ({
@@ -106,7 +106,7 @@ const QualitativeEvaluation: React.FC = () => {
               {strategy.subStrategies.map((subStrategy) => (
                 <div key={subStrategy.id} className="border-t pt-6 first:border-t-0 first:pt-0">
                   <div className="flex justify-between items-center mb-4">
-                    <h4 className="text-xl font-medium text-app-header">
+                    <h4 className="text-xl font-palanquin font-medium text-app-header">
                       {subStrategy.id}. {subStrategy.name}
                     </h4>
                     <div className="flex items-center gap-4">
@@ -133,7 +133,7 @@ const QualitativeEvaluation: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Guiding Questions Box (left) */}
                     <div className="bg-orange-50 p-4 rounded-md border border-orange-200">
-                      <h5 className="font-semibold text-app-header mb-2">Guiding Questions:</h5>
+                      <h5 className="font-palanquin font-semibold text-app-header mb-2">Guiding Questions:</h5>
                       <ul className="list-disc list-inside text-app-body-text text-sm space-y-1">
                         {(subStrategyGuidingQuestions[subStrategy.id] || [
                           `How does sub-strategy "${subStrategy.name}" apply to your product?`,

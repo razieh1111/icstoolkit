@@ -16,8 +16,8 @@ const ProjectDataSheet: React.FC = () => {
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md relative min-h-[calc(100vh-200px)]">
-      <h2 className="text-3xl font-bold text-app-header mb-6">Project Data Sheet</h2>
+    <div className="p-6 bg-white rounded-lg shadow-md relative min-h-[calc(100vh-200px)] font-roboto">
+      <h2 className="text-3xl font-palanquin font-bold text-app-header mb-6">Project Data Sheet</h2>
       <p className="text-app-body-text mb-8">
         Record essential project information here.
       </p>

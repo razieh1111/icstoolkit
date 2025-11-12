@@ -18,6 +18,11 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        'palanquin': ['"Palanquin Dark"', 'sans-serif'],
+        'roboto': ['Roboto', 'sans-serif'],
+        'roboto-condensed': ['"Roboto Condensed"', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

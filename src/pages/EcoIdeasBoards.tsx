@@ -46,8 +46,8 @@ const EcoIdeasBoards: React.FC = () => {
   const filteredIdeas = ecoIdeas.filter(idea => idea.strategyId === selectedStrategyId);
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md relative min-h-[calc(100vh-200px)]">
-      <h2 className="text-3xl font-bold text-app-header mb-6">Eco-Ideas Boards</h2>
+    <div className="p-6 bg-white rounded-lg shadow-md relative min-h-[calc(100vh-200px)] font-roboto">
+      <h2 className="text-3xl font-palanquin font-bold text-app-header mb-6">Eco-Ideas Boards</h2>
       <p className="text-app-body-text mb-8">
         Brainstorm and create digital sticky notes with ideas inspired by the LCD strategies and guidelines.
       </p>
@@ -55,17 +55,17 @@ const EcoIdeasBoards: React.FC = () => {
       <Tabs value={selectedStrategyId} onValueChange={setSelectedStrategyId} className="w-full">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7">
           {strategies.map((strategy) => (
-            <TabsTrigger key={strategy.id} value={strategy.id} className="whitespace-normal h-auto">
+            <TabsTrigger key={strategy.id} value={strategy.id} className="whitespace-normal h-auto font-roboto-condensed">
               {strategy.id}. {strategy.name}
             </TabsTrigger>
           ))}
         </TabsList>
         {strategies.map((strategy) => (
           <TabsContent key={strategy.id} value={strategy.id} className="mt-6">
-            <h3 className="text-2xl font-semibold text-app-header mb-4">{strategy.id}. {strategy.name}</h3>
+            <h3 className="text-2xl font-palanquin font-semibold text-app-header mb-4">{strategy.id}. {strategy.name}</h3>
 
             <div className="mb-6 p-4 border rounded-md bg-gray-50">
-              <h4 className="text-xl font-medium text-app-header mb-3">Add a New Idea:</h4>
+              <h4 className="text-xl font-palanquin font-medium text-app-header mb-3">Add a New Idea:</h4>
               <Textarea
                 placeholder="Type your eco-idea here..."
                 value={newIdeaText}
@@ -78,7 +78,7 @@ const EcoIdeasBoards: React.FC = () => {
               </Button>
             </div>
 
-            <h4 className="text-xl font-medium text-app-header mb-3">Your Ideas for this Strategy:</h4>
+            <h4 className="text-xl font-palanquin font-medium text-app-header mb-3">Your Ideas for this Strategy:</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredIdeas.length === 0 ? (
                 <p className="text-app-body-text col-span-full">No ideas yet for this strategy. Start brainstorming!</p>
