@@ -53,6 +53,12 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
 
     --app-page-background: 210 50% 95%; /* Very light blue derived from app-header */
+
+    /* Custom colors for concepts, exposed as CSS variables */
+    --app-concept-a-light: #E05040;
+    --app-concept-a-dark: #8C1C14;
+    --app-concept-b-light: #5FA0E0;
+    --app-concept-b-dark: #245590;
   }
 
   .dark {
@@ -93,6 +99,12 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
 
     --app-page-background: 222.2 84% 4.9%; /* Dark background for dark mode */
+
+    /* Custom colors for concepts, exposed as CSS variables */
+    --app-concept-a-light: #E05040;
+    --app-concept-a-dark: #8C1C14;
+    --app-concept-b-light: #5FA0E0;
+    --app-concept-b-dark: #245590;
   }
 }
 
