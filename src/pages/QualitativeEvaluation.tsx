@@ -5,7 +5,7 @@ import WipeContentButton from '@/components/WipeContentButton';
 import { useLcd } from '@/context/LcdContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Label } from '@/components/ui/label'; // Confirmed import
+import { Label } from '@/components/ui/label';
 import { PriorityLevel } from '@/types/lcd';
 
 const guidingQuestions = [
@@ -54,7 +54,7 @@ const QualitativeEvaluation: React.FC = () => {
       <Tabs defaultValue={strategies[0]?.id || "no-strategies"} className="w-full">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7">
           {strategies.map((strategy) => (
-            <TabsTrigger key={strategy.id} value={strategy.id}>
+            <TabsTrigger key={strategy.id} value={strategy.id} className="whitespace-normal h-auto">
               {strategy.id}. {strategy.name}
             </TabsTrigger>
           ))}

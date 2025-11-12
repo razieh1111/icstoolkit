@@ -55,7 +55,7 @@ const EcoIdeasBoards: React.FC = () => {
       <Tabs value={selectedStrategyId} onValueChange={setSelectedStrategyId} className="w-full">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7">
           {strategies.map((strategy) => (
-            <TabsTrigger key={strategy.id} value={strategy.id}>
+            <TabsTrigger key={strategy.id} value={strategy.id} className="whitespace-normal h-auto">
               {strategy.id}. {strategy.name}
             </TabsTrigger>
           ))}
