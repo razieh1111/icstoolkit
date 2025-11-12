@@ -13,13 +13,16 @@ import { cn } from '@/lib/utils';
 const EvaluationChecklists: React.FC = () => {
   const { strategies, evaluationChecklists, setEvaluationChecklists } = useLcd();
   const [selectedConcept, setSelectedConcept] = useState<ConceptType>('A');
-  const [selectedStrategyTab, setSelectedStrategyTab] = useState(strategies[0]?.id || '');
+  
+  // Filter out Strategy 7 for this page
+  const filteredStrategies = strategies.filter(s => s.id !== '7');
+  const [selectedStrategyTab, setSelectedStrategyTab] = useState(filteredStrategies[0]?.id || '');
 
   React.useEffect(() => {
-    if (strategies.length > 0 && !selectedStrategyTab) {
-      setSelectedStrategyTab(strategies[0].id);
+    if (filteredStrategies.length > 0 && !selectedStrategyTab) {
+      setSelectedStrategyTab(filteredStrategies[0].id);
     }
-  }, [strategies, selectedStrategyTab]);
+  }, [filteredStrategies, selectedStrategyTab]);
 
   const currentChecklistLevel = evaluationChecklists[selectedConcept]?.level || 'Simplified';
 
@@ -124,7 +127,7 @@ const EvaluationChecklists: React.FC = () => {
     </div>
   );
 
-  const currentStrategy = useMemo(() => strategies.find(s => s.id === selectedStrategyTab), [strategies, selectedStrategyTab]);
+  const currentStrategy = useMemo(() => filteredStrategies.find(s => s.id === selectedStrategyTab), [filteredStrategies, selectedStrategyTab]);
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md relative min-h-[calc(100vh-200px)] font-roboto">
@@ -177,7 +180,7 @@ const EvaluationChecklists: React.FC = () => {
 
       <Tabs value={selectedStrategyTab} onValueChange={setSelectedStrategyTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 h-auto p-2 items-stretch"> {/* Added items-stretch */}
-          {strategies.map((strategy) => (
+          {filteredStrategies.map((strategy) => (
             <TabsTrigger key={strategy.id} value={strategy.id} className="whitespace-normal h-auto font-roboto-condensed flex items-center justify-center text-center"> {/* Added flex, items-center, justify-center, text-center */}
               {strategy.id}. {strategy.name}
             </TabsTrigger>
