@@ -23,23 +23,25 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-app-body-text font-roboto">
+    <div className="min-h-screen flex flex-col bg-app-background-page text-app-body-text font-roboto">
       <header className="bg-app-header text-white p-4 shadow-md">
         <div className="container mx-auto flex flex-wrap justify-between items-center">
           <h1 className="text-2xl font-palanquin font-semibold text-app-accent">Life Cycle Design Toolkit</h1>
           <nav className="mt-2 md:mt-0">
-            <ul className="flex flex-wrap gap-2 md:gap-4">
-              {navItems.map((item) => (
-                <li key={item.path}>
-                  <Button asChild variant="ghost" className={cn(
-                    "text-white hover:bg-app-accent hover:text-app-header font-roboto-condensed",
-                    location.pathname === item.path && "bg-app-accent text-app-header"
-                  )}>
-                    <Link to={item.path}>{item.label}</Link>
-                  </Button>
-                </li>
-              ))}
-            </ul>
+            <div className="bg-app-nav-box-background p-2 rounded-md shadow-inner">
+              <ul className="flex flex-wrap gap-2 justify-center">
+                {navItems.map((item) => (
+                  <li key={item.path}>
+                    <Button asChild variant="ghost" className={cn(
+                      "text-white hover:bg-app-accent hover:text-app-header font-roboto-condensed",
+                      location.pathname === item.path && "bg-app-accent text-app-header"
+                    )}>
+                      <Link to={item.path}>{item.label}</Link>
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </nav>
         </div>
       </header>

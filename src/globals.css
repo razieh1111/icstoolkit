@@ -51,6 +51,9 @@
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --app-background-page: 210 20% 98%; /* Light cool grey */
+    --app-nav-box-background: 210 20% 95%; /* Slightly darker cool grey for nav box */
   }
 
   .dark {
@@ -89,6 +92,9 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --app-background-page: 220 10% 15%; /* Darker cool grey for dark mode */
+    --app-nav-box-background: 220 10% 20%; /* Slightly lighter dark grey for nav box */
   }
 }
 
@@ -98,7 +104,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-roboto; /* Apply Roboto as default body font */
+    @apply bg-app-background-page text-foreground font-roboto; /* Apply new app background */
   }
 
   h1, h2, h3, h4, h5, h6 {
