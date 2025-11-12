@@ -4,9 +4,10 @@ import React, { useState, useMemo } from 'react';
 import WipeContentButton from '@/components/WipeContentButton';
 import { useLcd } from '@/context/LcdContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'; // Keep for now if needed elsewhere, but will replace for checklist level
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'; // Import ToggleGroup
 import { ChecklistLevel, ConceptType, EvaluationLevel } from '@/types/lcd';
 import { cn } from '@/lib/utils';
 
@@ -136,52 +137,48 @@ const EvaluationChecklists: React.FC = () => {
         Evaluate how much each strategy, sub-strategy, and guideline has been pursued for Concept {selectedConcept}.
       </p>
 
-      <div className="flex flex-col md:flex-row gap-8 mb-8">
-        <div className="flex-1">
-          <h3 className="text-xl font-palanquin font-semibold text-app-header mb-3">Select Checklist Level:</h3>
-          <RadioGroup
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        {/* Checklist Level Dropdown */}
+        <div className="flex items-center gap-4">
+          <h3 className="text-xl font-palanquin font-semibold text-app-header">Checklist Level:</h3>
+          <Select
             value={currentChecklistLevel}
             onValueChange={(value: ChecklistLevel) => handleChecklistLevelChange(value)}
-            className="flex flex-col space-y-2"
           >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="Simplified" id="simplified" />
-              <Label htmlFor="simplified" className="text-app-body-text">Simplified (rate strategies only)</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="Normal" id="normal" />
-              <Label htmlFor="normal" className="text-app-body-text">Normal (rate sub-strategies, strategies calculated)</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="Detailed" id="detailed" />
-              <Label htmlFor="detailed" className="text-app-body-text">Detailed (rate guidelines, sub-strategies and strategies calculated)</Label>
-            </div>
-          </RadioGroup>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select Level" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Simplified">Simplified</SelectItem>
+              <SelectItem value="Normal">Normal</SelectItem>
+              <SelectItem value="Detailed">Detailed</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
-        <div className="flex-1">
-          <h3 className="text-xl font-palanquin font-semibold text-app-header mb-3">Select Concept:</h3>
-          <RadioGroup
+        {/* Concept Toggle Button */}
+        <div className="flex items-center gap-4">
+          <h3 className="text-xl font-palanquin font-semibold text-app-header">Concept:</h3>
+          <ToggleGroup
+            type="single"
             value={selectedConcept}
-            onValueChange={(value: ConceptType) => setSelectedConcept(value)}
-            className="flex flex-col space-y-2"
+            onValueChange={(value: ConceptType) => value && setSelectedConcept(value)}
+            className="flex"
           >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="A" id="concept-a" />
-              <Label htmlFor="concept-a" className="text-app-body-text">Concept/Product A</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="B" id="concept-b" />
-              <Label htmlFor="concept-b" className="text-app-body-text">Concept/Product B</Label>
-            </div>
-          </RadioGroup>
+            <ToggleGroupItem value="A" aria-label="Toggle Concept A">
+              Concept A
+            </ToggleGroupItem>
+            <ToggleGroupItem value="B" aria-label="Toggle Concept B">
+              Concept B
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
       </div>
 
       <Tabs value={selectedStrategyTab} onValueChange={setSelectedStrategyTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 h-auto p-2 items-stretch"> {/* Added items-stretch */}
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 h-auto p-2 items-stretch">
           {filteredStrategies.map((strategy) => (
-            <TabsTrigger key={strategy.id} value={strategy.id} className="whitespace-normal h-auto font-roboto-condensed flex items-center justify-center text-center"> {/* Added flex, items-center, justify-center, text-center */}
+            <TabsTrigger key={strategy.id} value={strategy.id} className="whitespace-normal h-auto font-roboto-condensed flex items-center justify-center text-center">
               {strategy.id}. {strategy.name}
             </TabsTrigger>
           ))}
