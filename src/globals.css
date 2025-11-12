@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 0 0% 100%; /* Keep this as default white for other components that might use it */
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -51,6 +51,8 @@
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --app-page-background: 210 50% 95%; /* Very light blue derived from app-header */
   }
 
   .dark {
@@ -89,6 +91,8 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --app-page-background: 222.2 84% 4.9%; /* Dark background for dark mode */
   }
 }
 
@@ -98,7 +102,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-roboto; /* Apply Roboto as default body font */
+    @apply bg-app-page-background text-foreground font-roboto; /* Apply the new custom background */
   }
 
   h1, h2, h3, h4, h5, h6 {
