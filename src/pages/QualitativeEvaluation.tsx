@@ -188,6 +188,52 @@ const QualitativeEvaluation: React.FC = () => {
     });
   };
 
+  // Define priority order for comparison
+  const priorityOrder: Record<PriorityLevel, number> = {
+    'None': 0,
+    'Low': 1,
+    'Mid': 2,
+    'High': 3,
+  };
+
+  // Function to calculate the highest priority among sub-strategies for a given strategy
+  const calculateHighestSubStrategyPriority = (currentStrategyId: string): PriorityLevel => {
+    const currentStrategy = strategies.find(s => s.id === currentStrategyId);
+    if (!currentStrategy) return 'None';
+
+    let highestPriority: PriorityLevel = 'None';
+    let highestScore = 0;
+
+    const subStrategyIdsToProcess: Set<string> = new Set();
+
+    currentStrategy.subStrategies.forEach(ss => {
+      if (currentStrategyId === '1' && ss.id === '1.5') {
+        if (currentStrategy.subStrategies.some(s => s.id === '1.4')) {
+          subStrategyIdsToProcess.add('1.4');
+          return;
+        }
+      }
+      if (currentStrategyId === '2' && ss.id === '2.3') {
+        if (currentStrategy.subStrategies.some(s => s.id === '2.2')) {
+          subStrategyIdsToProcess.add('2.2');
+          return;
+        }
+      }
+      subStrategyIdsToProcess.add(ss.id);
+    });
+
+    for (const subStrategyId of Array.from(subStrategyIdsToProcess)) {
+      const subPriority = qualitativeEvaluation[currentStrategyId]?.subStrategies[subStrategyId]?.priority || 'None';
+      const subScore = priorityOrder[subPriority];
+
+      if (subScore > highestScore) {
+        highestScore = subScore;
+        highestPriority = subPriority;
+      }
+    }
+    return highestPriority;
+  };
+
   // Filter out Strategy 7 for this page
   const filteredStrategies = strategies.filter(s => s.id !== '7');
 
@@ -214,23 +260,40 @@ const QualitativeEvaluation: React.FC = () => {
               </h3>
               <div className="flex items-center gap-4">
                 <Label htmlFor={`strategy-priority-${strategy.id}`} className="text-app-body-text">Strategy Priority:</Label>
-                <Select
-                  value={qualitativeEvaluation[strategy.id]?.priority || 'None'}
-                  onValueChange={(value: PriorityLevel) => setQualitativeEvaluation(prev => ({
-                    ...prev,
-                    [strategy.id]: { ...prev[strategy.id], priority: value }
-                  }))}
-                >
-                  <SelectTrigger id={`strategy-priority-${strategy.id}`} className="w-[180px]">
-                    <SelectValue placeholder="Select Priority" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="High">High</SelectItem>
-                    <SelectItem value="Mid">Mid</SelectItem>
-                    <SelectItem value="Low">Low</SelectItem>
-                    <SelectItem value="None">None</SelectItem>
-                  </SelectContent>
-                </Select>
+                {['1', '2', '3', '4'].includes(strategy.id) ? (
+                  <Select
+                    value={calculateHighestSubStrategyPriority(strategy.id)}
+                  >
+                    <SelectTrigger id={`strategy-priority-${strategy.id}`} className="w-[180px]" disabled>
+                      <SelectValue placeholder="Calculated Priority" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {/* These items are needed for SelectValue to display the text correctly */}
+                      <SelectItem value="High">High</SelectItem>
+                      <SelectItem value="Mid">Mid</SelectItem>
+                      <SelectItem value="Low">Low</SelectItem>
+                      <SelectItem value="None">None</SelectItem>
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Select
+                    value={qualitativeEvaluation[strategy.id]?.priority || 'None'}
+                    onValueChange={(value: PriorityLevel) => setQualitativeEvaluation(prev => ({
+                      ...prev,
+                      [strategy.id]: { ...prev[strategy.id], priority: value }
+                    }))}
+                  >
+                    <SelectTrigger id={`strategy-priority-${strategy.id}`} className="w-[180px]">
+                      <SelectValue placeholder="Select Priority" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="High">High</SelectItem>
+                      <SelectItem value="Mid">Mid</SelectItem>
+                      <SelectItem value="Low">Low</SelectItem>
+                      <SelectItem value="None">None</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
             </div>
 
