@@ -393,7 +393,6 @@ const QualitativeEvaluation: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               {/* Guiding Questions Box (left) */}
                               <div className="bg-orange-50 p-4 rounded-md border border-orange-200">
-                                <h5 className="font-palanquin font-semibold text-app-header mb-2">Guiding Questions:</h5>
                                 <ul className="list-disc list-inside text-app-body-text text-sm space-y-1">
                                   {combinedGuidingQuestions.map((q, idx) => (
                                     <li key={idx}>{q}</li>
@@ -467,7 +466,6 @@ const QualitativeEvaluation: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               {/* Guiding Questions Box (left) */}
                               <div className="bg-orange-50 p-4 rounded-md border border-orange-200">
-                                <h5 className="font-palanquin font-semibold text-app-header mb-2">Guiding Questions:</h5>
                                 <ul className="list-disc list-inside text-app-body-text text-sm space-y-1">
                                   {combinedGuidingQuestions.map((q, idx) => (
                                     <li key={idx}>{q}</li>
@@ -521,7 +519,6 @@ const QualitativeEvaluation: React.FC = () => {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* Guiding Questions Box (left) */}
                             <div className="bg-orange-50 p-4 rounded-md border border-orange-200">
-                              <h5 className="font-palanquin font-semibold text-app-header mb-2">Guiding Questions:</h5>
                               <ul className="list-disc list-inside text-app-body-text text-sm space-y-1">
                                 {(subStrategyGuidingQuestions[subStrategy.id] || [
                                   `How does sub-strategy "${subStrategy.name}" apply to your product?`,
