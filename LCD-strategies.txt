@@ -35,22 +35,7 @@ Reduce resource consumption in the product’s default state
 
 2.Minimising Energy Consumption
 
-2.1.Minimise energy consumption during pre-production and production
-Select materials with low-energy intensity
-Select processing technologies with the lowest energy consumption possible
-Engage efficient machinery
-Use the heat emitted in certain processes for preheating other process flows
-Engage pump and motor speed regulators with dynamic configuration
-Equip the machinery with intelligent power-off utilities
-Optimise the overall dimensions of the engines
-Facilitate engine maintenance
-Define accurately the tolerance parameters
-Optimise the volumes of required real estate
-Optimise stocktaking systems
-Optimise transportation systems and scale down the weight and dimensions of all transportable materials and semi-products
-Engage efficient general heating, illumination and ventilation in buildings
-
-2.2.Minimise energy consumption during transportation and storage
+2.1.Minimise energy consumption during transportation and storage
 Design compact products with high storage density
 Design concentrated products
 Equip products with on-site assembly
@@ -59,7 +44,7 @@ Scale down the packaging weight
 Decentralise activities to reduce transportation volumes
 Select local material and energy sources
 
-2.3.Select the most efficient energy consumption systems during use
+2.2.Select the most efficient energy consumption systems during use
 Design products for collective use
 Design for energy-efficient operational stages
 Design for energy-efficient maintenance
@@ -73,7 +58,7 @@ Scale down the weight of transportable goods
 Design energy recovery systems
 Design energy-saving systems
 
-2.4.Enable a variable consumption of energy, to follow demand fluctuations
+2.3.Enable a variable consumption of energy, to follow demand fluctuations
 Engage digital dynamic support systems
 Design dynamic energy consumption systems for differentiated operational stages
 Engage sensors to adjust consumption during differentiated operational stages
