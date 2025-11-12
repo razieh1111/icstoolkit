@@ -4,10 +4,9 @@ import React, { useState, useMemo } from 'react';
 import WipeContentButton from '@/components/WipeContentButton';
 import { useLcd } from '@/context/LcdContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'; // Keep for now if needed elsewhere, but will replace for checklist level
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'; // Import ToggleGroup
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { ChecklistLevel, ConceptType, EvaluationLevel } from '@/types/lcd';
 import { cn } from '@/lib/utils';
 
@@ -175,79 +174,99 @@ const EvaluationChecklists: React.FC = () => {
         </div>
       </div>
 
-      <Tabs value={selectedStrategyTab} onValueChange={setSelectedStrategyTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 h-auto p-2 items-stretch">
+      {currentChecklistLevel === 'Simplified' ? (
+        <div className="space-y-8 mt-6 pt-4">
           {filteredStrategies.map((strategy) => (
-            <TabsTrigger key={strategy.id} value={strategy.id} className="whitespace-normal h-auto font-roboto-condensed flex items-center justify-center text-center">
-              {strategy.id}. {strategy.name}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        {currentStrategy && (
-          <TabsContent value={currentStrategy.id} className="mt-6 pt-4">
-            <h3 className="text-2xl font-palanquin font-semibold text-app-header mb-4">{currentStrategy.id}. {currentStrategy.name}</h3>
-
-            {/* Strategy Level Evaluation */}
-            <div className="mb-6 p-4 border rounded-md bg-gray-50">
-              <h4 className="text-xl font-palanquin font-medium text-app-header mb-3">Strategy Evaluation:</h4>
-              {renderEvaluationSelectors(
-                'strategy',
-                currentStrategy.id,
-                currentStrategy.name,
-                evaluationChecklists[selectedConcept]?.strategies[currentStrategy.id] || 'N/A'
-              )}
+            <div key={strategy.id} className="border-t pt-6 first:border-t-0 first:pt-0">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-2xl font-palanquin font-semibold text-app-header">
+                  {strategy.id}. {strategy.name}
+                </h3>
+                {renderEvaluationSelectors(
+                  'strategy',
+                  strategy.id,
+                  '', // Label is handled by the h3, so pass empty string
+                  evaluationChecklists[selectedConcept]?.strategies[strategy.id] || 'N/A'
+                )}
+              </div>
             </div>
+          ))}
+        </div>
+      ) : (
+        <Tabs value={selectedStrategyTab} onValueChange={setSelectedStrategyTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 h-auto p-2 items-stretch">
+            {filteredStrategies.map((strategy) => (
+              <TabsTrigger key={strategy.id} value={strategy.id} className="whitespace-normal h-auto font-roboto-condensed flex items-center justify-center text-center">
+                {strategy.id}. {strategy.name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {currentStrategy && (
+            <TabsContent value={currentStrategy.id} className="mt-6 pt-4">
+              <h3 className="text-2xl font-palanquin font-semibold text-app-header mb-4">{currentStrategy.id}. {currentStrategy.name}</h3>
 
-            {/* Sub-strategy Level Evaluation */}
-            {(currentChecklistLevel === 'Normal' || currentChecklistLevel === 'Detailed') && (
+              {/* Strategy Level Evaluation */}
               <div className="mb-6 p-4 border rounded-md bg-gray-50">
-                <h4 className="text-xl font-palanquin font-medium text-app-header mb-3">Sub-strategy Evaluation:</h4>
-                <div className="space-y-4">
-                  {currentStrategy.subStrategies.map(subStrategy => (
-                    <div key={subStrategy.id} className={cn(
-                      "pl-4",
-                      currentChecklistLevel === 'Detailed' && "opacity-60 pointer-events-none" // Disable if detailed
-                    )}>
-                      {renderEvaluationSelectors(
-                        'subStrategy',
-                        subStrategy.id,
-                        `${subStrategy.id}. ${subStrategy.name}`,
-                        evaluationChecklists[selectedConcept]?.subStrategies[subStrategy.id] || 'N/A'
-                      )}
-                    </div>
-                  ))}
-                </div>
+                <h4 className="text-xl font-palanquin font-medium text-app-header mb-3">Strategy Evaluation:</h4>
+                {renderEvaluationSelectors(
+                  'strategy',
+                  currentStrategy.id,
+                  currentStrategy.name,
+                  evaluationChecklists[selectedConcept]?.strategies[currentStrategy.id] || 'N/A'
+                )}
               </div>
-            )}
 
-            {/* Guideline Level Evaluation */}
-            {currentChecklistLevel === 'Detailed' && (
-              <div className="mb-6 p-4 border rounded-md bg-gray-50">
-                <h4 className="text-xl font-palanquin font-medium text-app-header mb-3">Guideline Evaluation:</h4>
-                <div className="space-y-4">
-                  {currentStrategy.subStrategies.map(subStrategy => (
-                    <div key={subStrategy.id} className="pl-4">
-                      <h5 className="text-lg font-palanquin font-medium text-app-body-text mb-2">{subStrategy.id}. {subStrategy.name}</h5>
-                      <div className="space-y-2 pl-4">
-                        {subStrategy.guidelines.map(guideline => (
-                          <div key={guideline.id}>
-                            {renderEvaluationSelectors(
-                              'guideline',
-                              guideline.id,
-                              guideline.name,
-                              evaluationChecklists[selectedConcept]?.guidelines[guideline.id] || 'N/A'
-                            )}
-                          </div>
-                        ))}
+              {/* Sub-strategy Level Evaluation */}
+              {(currentChecklistLevel === 'Normal' || currentChecklistLevel === 'Detailed') && (
+                <div className="mb-6 p-4 border rounded-md bg-gray-50">
+                  <h4 className="text-xl font-palanquin font-medium text-app-header mb-3">Sub-strategy Evaluation:</h4>
+                  <div className="space-y-4">
+                    {currentStrategy.subStrategies.map(subStrategy => (
+                      <div key={subStrategy.id} className={cn(
+                        "pl-4",
+                        currentChecklistLevel === 'Detailed' && "opacity-60 pointer-events-none" // Disable if detailed
+                      )}>
+                        {renderEvaluationSelectors(
+                          'subStrategy',
+                          subStrategy.id,
+                          `${subStrategy.id}. ${subStrategy.name}`,
+                          evaluationChecklists[selectedConcept]?.subStrategies[subStrategy.id] || 'N/A'
+                        )}
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
-          </TabsContent>
-        )}
-      </Tabs>
+              )}
+
+              {/* Guideline Level Evaluation */}
+              {currentChecklistLevel === 'Detailed' && (
+                <div className="mb-6 p-4 border rounded-md bg-gray-50">
+                  <h4 className="text-xl font-palanquin font-medium text-app-header mb-3">Guideline Evaluation:</h4>
+                  <div className="space-y-4">
+                    {currentStrategy.subStrategies.map(subStrategy => (
+                      <div key={subStrategy.id} className="pl-4">
+                        <h5 className="text-lg font-palanquin font-medium text-app-body-text mb-2">{subStrategy.id}. {subStrategy.name}</h5>
+                        <div className="space-y-2 pl-4">
+                          {subStrategy.guidelines.map(guideline => (
+                            <div key={guideline.id}>
+                              {renderEvaluationSelectors(
+                                'guideline',
+                                guideline.id,
+                                guideline.name,
+                                evaluationChecklists[selectedConcept]?.guidelines[guideline.id] || 'N/A'
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </TabsContent>
+          )}
+        </Tabs>
+      )}
 
       <WipeContentButton sectionKey="evaluationChecklists" />
     </div>
