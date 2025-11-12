@@ -78,7 +78,8 @@ const EvaluationChecklists: React.FC = () => {
     });
   };
 
-  const evaluationOptions: EvaluationLevel[] = ['Excellent', 'Good', 'Mediocre', 'Poor', 'N/A'];
+  const aggregateEvaluationOptions: EvaluationLevel[] = ['Excellent', 'Good', 'Mediocre', 'Poor', 'N/A'];
+  const guidelineEvaluationOptions: EvaluationLevel[] = ['Yes', 'Partially', 'No', 'N/A'];
 
   const calculateAggregateEvaluation = (evaluations: EvaluationLevel[]): EvaluationLevel => {
     if (evaluations.length === 0 || evaluations.every(e => e === 'N/A')) return 'N/A';
@@ -88,14 +89,18 @@ const EvaluationChecklists: React.FC = () => {
       'Good': 3,
       'Mediocre': 2,
       'Poor': 1,
+      'Yes': 4,
+      'Partially': 2.5, // Mid-point to allow for 'Good' or 'Mediocre' depending on average
+      'No': 1,
       'N/A': 0,
     };
 
-    const totalScore = evaluations.reduce((sum, evalLevel) => sum + scoreMap[evalLevel], 0);
-    const validEvaluations = evaluations.filter(e => e !== 'N/A');
-    if (validEvaluations.length === 0) return 'N/A';
+    const scores = evaluations.map(evalLevel => scoreMap[evalLevel]).filter(score => score > 0); // Filter out N/A (score 0)
+    
+    if (scores.length === 0) return 'N/A';
 
-    const averageScore = totalScore / validEvaluations.length;
+    const totalScore = scores.reduce((sum, score) => sum + score, 0);
+    const averageScore = totalScore / scores.length;
 
     if (averageScore >= 3.5) return 'Excellent';
     if (averageScore >= 2.5) return 'Good';
@@ -109,22 +114,25 @@ const EvaluationChecklists: React.FC = () => {
     id: string,
     currentValue: EvaluationLevel,
     disabled: boolean = false
-  ) => (
-    <Select
-      value={currentValue}
-      onValueChange={(value: EvaluationLevel) => handleEvaluationChange(type, id, value)}
-      disabled={disabled}
-    >
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Select Level" />
-      </SelectTrigger>
-      <SelectContent>
-        {evaluationOptions.map(option => (
-          <SelectItem key={option} value={option}>{option}</SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-  );
+  ) => {
+    const options = type === 'guideline' ? guidelineEvaluationOptions : aggregateEvaluationOptions;
+    return (
+      <Select
+        value={currentValue}
+        onValueChange={(value: EvaluationLevel) => handleEvaluationChange(type, id, value)}
+        disabled={disabled}
+      >
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Select Level" />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map(option => (
+            <SelectItem key={option} value={option}>{option}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    );
+  };
 
   const currentStrategy = useMemo(() => filteredStrategies.find(s => s.id === selectedStrategyTab), [filteredStrategies, selectedStrategyTab]);
 
@@ -298,8 +306,8 @@ const EvaluationChecklists: React.FC = () => {
                     {/* Guidelines with individual selectors */}
                     <div className="space-y-4 pl-4">
                       {subStrategy.guidelines.map(guideline => (
-                        <div key={guideline.id} className="flex justify-between items-center"> {/* Added flex classes */}
-                          <Label className="text-app-body-text">{guideline.name}</Label> {/* Moved label here */}
+                        <div key={guideline.id} className="flex justify-between items-center">
+                          <Label className="text-app-body-text">{guideline.name}</Label>
                           {renderEvaluationSelectors(
                             'guideline',
                             guideline.id,
