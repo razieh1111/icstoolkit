@@ -30,7 +30,10 @@ export interface QualitativeEvaluationData {
   [strategyId: string]: {
     priority: PriorityLevel;
     subStrategies: {
-      [subStrategyId: string]: PriorityLevel;
+      [subStrategyId: string]: {
+        priority: PriorityLevel;
+        answer: string; // Added this field
+      };
     };
   };
 }

@@ -73,7 +73,7 @@ export const LcdProvider = ({ children }: { children: ReactNode }) => {
       parsedStrategies.forEach(strategy => {
         initialQualitative[strategy.id] = { priority: 'None', subStrategies: {} };
         strategy.subStrategies.forEach(sub => {
-          initialQualitative[strategy.id].subStrategies[sub.id] = 'None';
+          initialQualitative[strategy.id].subStrategies[sub.id] = { priority: 'None', answer: '' }; // Initialize answer field
         });
         initialRadar.A[strategy.id] = 0; // Default to Poor
         initialRadar.B[strategy.id] = 0; // Default to Poor
@@ -114,7 +114,7 @@ export const LcdProvider = ({ children }: { children: ReactNode }) => {
         strategies.forEach(strategy => {
           resetQualitative[strategy.id] = { priority: 'None', subStrategies: {} };
           strategy.subStrategies.forEach(sub => {
-            resetQualitative[strategy.id].subStrategies[sub.id] = 'None';
+            resetQualitative[strategy.id].subStrategies[sub.id] = { priority: 'None', answer: '' }; // Reset answer field
           });
         });
         setQualitativeEvaluation(resetQualitative);
