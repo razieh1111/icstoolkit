@@ -71,8 +71,6 @@ export default {
         'app-header': '#003366',
         'app-body-text': '#333333', // Dark grey for body text
         'app-accent': '#ff8c00',
-        'app-background-page': 'hsl(var(--app-background-page))',
-        'app-nav-box-background': 'hsl(var(--app-nav-box-background))',
       },
       borderRadius: {
         lg: "var(--radius)",
