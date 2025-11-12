@@ -80,10 +80,6 @@ Engage sensors to adjust consumption during differentiated operational stages
 Equip machinery with intelligent power-off utilities
 Programme product default state at minimal energy consumption
 
-2.5.Minimise energy consumption during product development
-Engage efficient workplace heating, illumination and ventilation
-Engage digital tools for communicating with remote working sites
-
 3.Minimising Resources Toxicity and Harmfulness
 
 3.1.Select nontoxic and harmless materials
