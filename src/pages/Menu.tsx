@@ -6,11 +6,11 @@ import { Button } from '@/components/ui/button';
 
 const Menu: React.FC = () => {
   const menuItems = [
-    { path: '/project-data', label: '1) Project Data Sheet' },
-    { path: '/qualitative-evaluation', label: '2) Qualitative Evaluation of Existing Products/Systems and Strategic Priorities' },
-    { path: '/eco-ideas', label: '3) Eco-Ideas Boards' },
-    { path: '/evaluation-checklists', label: '4) Evaluation of the Implementation of Life Cycle Design Strategies' },
-    { path: '/evaluation-radar', label: '5) Evaluation Radar' },
+    { path: '/project-data', label: 'Project Data Sheet' },
+    { path: '/qualitative-evaluation', label: 'Qualitative Evaluation of Existing Products/Systems and Strategic Priorities' },
+    { path: '/eco-ideas', label: 'Eco-Ideas Boards' },
+    { path: '/evaluation-checklists', label: 'Evaluation of the Implementation of Life Cycle Design Strategies' },
+    { path: '/evaluation-radar', label: 'Evaluation Radar' },
   ];
 
   return (
