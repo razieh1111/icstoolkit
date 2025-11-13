@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { PriorityLevel } from '@/types/lcd';
+import { getStrategyPriorityForDisplay, getPriorityTagClasses } from '@/utils/lcdUtils'; // Import new utilities
+import { cn } from '@/lib/utils'; // Import cn for conditional class merging
 
 // Placeholder guiding questions for sub-strategies
 const subStrategyGuidingQuestions: { [key: string]: string[] } = {
@@ -82,7 +84,7 @@ const subStrategyGuidingQuestions: { [key: string]: string[] } = {
     "Is repair information or tools provided or easily obtainable?"
   ],
   '5.5': [
-    "How can the product be designed for easy upgradeability or refurbishment?",
+    "How can the product be designed to be easily upgradeability or refurbishment?",
     "Are key components easily swapped out for newer versions?",
     "Can the product be returned to a 'like-new' state through simple processes?"
   ],
@@ -246,11 +248,27 @@ const QualitativeEvaluation: React.FC = () => {
 
       <Tabs defaultValue={filteredStrategies[0]?.id || "no-strategies"} className="w-full">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 h-auto p-2 items-stretch">
-          {filteredStrategies.map((strategy) => (
-            <TabsTrigger key={strategy.id} value={strategy.id} className="whitespace-normal h-auto font-roboto-condensed flex items-center justify-center text-center">
-              {strategy.id}. {strategy.name}
-            </TabsTrigger>
-          ))}
+          {filteredStrategies.map((strategy) => {
+            const displayPriority = getStrategyPriorityForDisplay(strategy, qualitativeEvaluation);
+            const tagClasses = getPriorityTagClasses(displayPriority);
+            return (
+              <TabsTrigger
+                key={strategy.id}
+                value={strategy.id}
+                className={cn(
+                  "whitespace-normal h-auto font-roboto-condensed flex items-center justify-center text-center relative pt-2 pb-4", // Added relative and padding
+                )}
+              >
+                {strategy.id}. {strategy.name}
+                <span className={cn(
+                  "absolute bottom-0.5 right-0.5 text-xs font-roboto-condensed px-1 rounded-sm",
+                  tagClasses
+                )}>
+                  {displayPriority}
+                </span>
+              </TabsTrigger>
+            );
+          })}
         </TabsList>
         {filteredStrategies.map((strategy) => (
           <TabsContent key={strategy.id} value={strategy.id} className="mt-6 pt-4">

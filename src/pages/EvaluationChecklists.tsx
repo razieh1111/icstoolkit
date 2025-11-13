@@ -9,9 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { ChecklistLevel, ConceptType, EvaluationLevel } from '@/types/lcd';
 import { cn } from '@/lib/utils';
+import { getStrategyPriorityForDisplay, getPriorityTagClasses } from '@/utils/lcdUtils'; // Import new utilities
 
 const EvaluationChecklists: React.FC = () => {
-  const { strategies, evaluationChecklists, setEvaluationChecklists } = useLcd();
+  const { strategies, evaluationChecklists, setEvaluationChecklists, qualitativeEvaluation } = useLcd(); // Added qualitativeEvaluation
   const [selectedConcept, setSelectedConcept] = useState<ConceptType>('A');
   
   // Use all strategies, no filtering for this page
@@ -280,11 +281,27 @@ const EvaluationChecklists: React.FC = () => {
       ) : ( // Detailed level
         <Tabs value={selectedStrategyTab} onValueChange={setSelectedStrategyTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 h-auto p-2 items-stretch">
-            {allStrategies.map((strategy) => (
-              <TabsTrigger key={strategy.id} value={strategy.id} className="whitespace-normal h-auto font-roboto-condensed flex items-center justify-center text-center">
-                {strategy.id}. {strategy.name}
-              </TabsTrigger>
-            ))}
+            {allStrategies.map((strategy) => {
+              const displayPriority = getStrategyPriorityForDisplay(strategy, qualitativeEvaluation);
+              const tagClasses = getPriorityTagClasses(displayPriority);
+              return (
+                <TabsTrigger
+                  key={strategy.id}
+                  value={strategy.id}
+                  className={cn(
+                    "whitespace-normal h-auto font-roboto-condensed flex items-center justify-center text-center relative pt-2 pb-4", // Added relative and padding
+                  )}
+                >
+                  {strategy.id}. {strategy.name}
+                  <span className={cn(
+                    "absolute bottom-0.5 right-0.5 text-xs font-roboto-condensed px-1 rounded-sm",
+                    tagClasses
+                  )}>
+                    {displayPriority}
+                  </span>
+                </TabsTrigger>
+              );
+            })}
           </TabsList>
           {currentStrategy && (
             <TabsContent value={currentStrategy.id} className="mt-6 pt-4">

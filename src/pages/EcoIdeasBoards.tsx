@@ -8,9 +8,11 @@ import StickyNote from '@/components/StickyNote'; // Import the new StickyNote c
 import { PlusCircle } from 'lucide-react'; // Keeping imports for now, even if UI is removed
 import { EcoIdea } from '@/types/lcd';
 import { toast } from 'sonner';
+import { getStrategyPriorityForDisplay, getPriorityTagClasses } from '@/utils/lcdUtils'; // Import new utilities
+import { cn } from '@/lib/utils'; // Import cn for conditional class merging
 
 const EcoIdeasBoards: React.FC = () => {
-  const { strategies, ecoIdeas, setEcoIdeas } = useLcd();
+  const { strategies, ecoIdeas, setEcoIdeas, qualitativeEvaluation } = useLcd(); // Added qualitativeEvaluation
   const [selectedStrategyId, setSelectedStrategyId] = useState(strategies[0]?.id || '');
 
   React.useEffect(() => {
@@ -59,11 +61,27 @@ const EcoIdeasBoards: React.FC = () => {
 
       <Tabs value={selectedStrategyId} onValueChange={setSelectedStrategyId} className="w-full">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 h-auto p-2 items-stretch">
-          {strategies.map((strategy) => (
-            <TabsTrigger key={strategy.id} value={strategy.id} className="whitespace-normal h-auto font-roboto-condensed flex items-center justify-center text-center">
-              {strategy.id}. {strategy.name}
-            </TabsTrigger>
-          ))}
+          {strategies.map((strategy) => {
+            const displayPriority = getStrategyPriorityForDisplay(strategy, qualitativeEvaluation);
+            const tagClasses = getPriorityTagClasses(displayPriority);
+            return (
+              <TabsTrigger
+                key={strategy.id}
+                value={strategy.id}
+                className={cn(
+                  "whitespace-normal h-auto font-roboto-condensed flex items-center justify-center text-center relative pt-2 pb-4", // Added relative and padding
+                )}
+              >
+                {strategy.id}. {strategy.name}
+                <span className={cn(
+                  "absolute bottom-0.5 right-0.5 text-xs font-roboto-condensed px-1 rounded-sm",
+                  tagClasses
+                )}>
+                  {displayPriority}
+                </span>
+              </TabsTrigger>
+            );
+          })}
         </TabsList>
         {strategies.map((strategy) => (
           <TabsContent key={strategy.id} value={strategy.id} className="mt-6 pt-4">
