@@ -5,11 +5,11 @@ import WipeContentButton from '@/components/WipeContentButton';
 import { useLcd } from '@/context/LcdContext';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
 import { EvaluationLevel } from '@/types/lcd';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
+import StrategyInsightBox from '@/components/StrategyInsightBox'; // NEW: Import StrategyInsightBox
+import { getStrategyPriorityForDisplay } from '@/utils/lcdUtils'; // Already imported
 
 const EvaluationRadar: React.FC = () => {
-  const { strategies, evaluationChecklists, setRadarChartData, radarChartData } = useLcd();
+  const { strategies, evaluationChecklists, setRadarChartData, radarChartData, qualitativeEvaluation, radarInsights, setRadarInsights } = useLcd();
   // Removed selectedConcept state as both concepts will always be displayed
 
   // Map EvaluationLevel to a numerical score for the radar chart
@@ -88,28 +88,65 @@ const EvaluationRadar: React.FC = () => {
     fullMark: 4, // Max score for Excellent
   }));
 
+  const handleInsightTextChange = (strategyId: string, newText: string) => {
+    setRadarInsights(prev => ({
+      ...prev,
+      [strategyId]: newText,
+    }));
+  };
+
+  // Define positions for the insight boxes around the radar chart
+  // These are approximate and might need fine-tuning based on actual rendering
+  const insightBoxPositions: { [key: string]: React.CSSProperties } = {
+    '1': { top: '0%', left: '50%', transform: 'translate(-50%, -100%)' }, // Top center
+    '2': { top: '25%', right: '0%', transform: 'translate(100%, -50%)' }, // Mid-right
+    '3': { top: '75%', right: '0%', transform: 'translate(100%, -50%)' }, // Bottom-right
+    '4': { bottom: '0%', left: '50%', transform: 'translate(-50%, 100%)' }, // Bottom center
+    '5': { top: '75%', left: '0%', transform: 'translate(-100%, -50%)' }, // Bottom-left
+    '6': { top: '25%', left: '0%', transform: 'translate(-100%, -50%)' }, // Mid-left
+    '7': { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }, // Center (if needed, otherwise adjust others)
+  };
+
   return (
     <div className="p-6 bg-white rounded-lg shadow-md relative min-h-[calc(100vh-200px)] font-roboto">
       <h2 className="text-3xl font-palanquin font-semibold text-app-header mb-6">Evaluation Radar</h2>
       <p className="text-app-body-text mb-4">
         This radar chart displays the pursuit level of each of the 7 strategies for Concept A and B,
-        based on your evaluations in the "Evaluation Checklists" section.
+        based on your evaluations in the "Evaluation Checklists" section. Use the text boxes to add insights for each strategy.
       </p>
 
-      {/* Removed "Select Concept to Highlight" section */}
-
-      <div className="w-full h-[500px] flex justify-center items-center">
+      <div className="relative w-full h-[600px] flex justify-center items-center"> {/* Increased height for more space */}
         {strategies.length > 0 ? (
-          <ResponsiveContainer width="100%" height="100%">
-            <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
-              <PolarGrid stroke="#e0e0e0" />
-              <PolarAngleAxis dataKey="strategyName" stroke="#333" tick={{ fill: '#333', fontSize: 12, fontFamily: 'Roboto Condensed' }} />
-              <PolarRadiusAxis angle={90} domain={[0, 4]} tickCount={5} stroke="#333" tick={{ fill: '#333', fontSize: 10, fontFamily: 'Roboto' }} />
-              <Radar name="Concept A" dataKey="A" stroke="var(--app-concept-a-dark)" fill="var(--app-concept-a-light)" fillOpacity={0.6} />
-              <Radar name="Concept B" dataKey="B" stroke="var(--app-concept-b-dark)" fill="var(--app-concept-b-light)" fillOpacity={0.6} />
-              <Legend />
-            </RadarChart>
-          </ResponsiveContainer>
+          <>
+            <ResponsiveContainer width="60%" height="100%"> {/* Radar takes 60% width */}
+              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
+                <PolarGrid stroke="#e0e0e0" />
+                <PolarAngleAxis dataKey="strategyName" stroke="#333" tick={{ fill: '#333', fontSize: 12, fontFamily: 'Roboto Condensed' }} />
+                <PolarRadiusAxis angle={90} domain={[0, 4]} tickCount={5} stroke="#333" tick={{ fill: '#333', fontSize: 10, fontFamily: 'Roboto' }} />
+                <Radar name="Concept A" dataKey="A" stroke="var(--app-concept-a-dark)" fill="var(--app-concept-a-light)" fillOpacity={0.6} />
+                <Radar name="Concept B" dataKey="B" stroke="var(--app-concept-b-dark)" fill="var(--app-concept-b-light)" fillOpacity={0.6} />
+                <Legend />
+              </RadarChart>
+            </ResponsiveContainer>
+
+            {/* Render StrategyInsightBoxes */}
+            {strategies.map(strategy => {
+              const priority = getStrategyPriorityForDisplay(strategy, qualitativeEvaluation);
+              const positionStyle = insightBoxPositions[strategy.id] || {}; // Get predefined position
+
+              return (
+                <StrategyInsightBox
+                  key={strategy.id}
+                  strategy={strategy}
+                  priority={priority}
+                  text={radarInsights[strategy.id] || ''}
+                  onTextChange={handleInsightTextChange}
+                  className="absolute" // Use absolute positioning
+                  style={positionStyle}
+                />
+              );
+            })}
+          </>
         ) : (
           <p className="text-app-body-text">Loading strategies...</p>
         )}

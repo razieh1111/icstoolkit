@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import {
   Strategy,
+  SubStrategy,
+  Guideline,
   ProjectData,
   QualitativeEvaluationData,
   EcoIdea,
@@ -12,6 +14,7 @@ import {
   EvaluationLevel,
   ChecklistLevel,
   ConceptType,
+  RadarInsight, // NEW: Import RadarInsight
 } from '@/types/lcd';
 import { parseLcdStrategies } from '@/utils/lcdParser';
 
@@ -27,6 +30,8 @@ interface LcdContextType {
   setEvaluationChecklists: (data: EvaluationChecklistData) => void;
   radarChartData: RadarChartData;
   setRadarChartData: (data: RadarChartData) => void;
+  radarInsights: { [strategyId: string]: string }; // NEW: Add radarInsights to context type
+  setRadarInsights: React.Dispatch<React.SetStateAction<{ [strategyId: string]: string }>>; // NEW: Add setter
   resetSection: (section: string) => void;
   getStrategyById: (id: string) => Strategy | undefined;
   getSubStrategyById: (strategyId: string, subStrategyId: string) => SubStrategy | undefined;
@@ -53,6 +58,7 @@ const initialRadarChartData: RadarChartData = {
   A: {},
   B: {},
 };
+const initialRadarInsights: { [strategyId: string]: string } = {}; // NEW: Initial state for radar insights
 
 export const LcdProvider = ({ children }: { children: ReactNode }) => {
   const [strategies, setStrategies] = useState<Strategy[]>([]);
@@ -61,15 +67,17 @@ export const LcdProvider = ({ children }: { children: ReactNode }) => {
   const [ecoIdeas, setEcoIdeas] = useState<EcoIdea[]>(initialEcoIdeas);
   const [evaluationChecklists, setEvaluationChecklists] = useState<EvaluationChecklistData>(initialEvaluationChecklists);
   const [radarChartData, setRadarChartData] = useState<RadarChartData>(initialRadarChartData);
+  const [radarInsights, setRadarInsights] = useState<{ [strategyId: string]: string }>(initialRadarInsights); // NEW: State for radar insights
 
   useEffect(() => {
     const loadStrategies = async () => {
       const parsedStrategies = await parseLcdStrategies('/LCD-strategies.txt');
       setStrategies(parsedStrategies);
 
-      // Initialize qualitative evaluation and radar data based on parsed strategies
+      // Initialize qualitative evaluation, radar data, and radar insights based on parsed strategies
       const initialQualitative: QualitativeEvaluationData = {};
       const initialRadar: RadarChartData = { A: {}, B: {} };
+      const initialInsights: { [strategyId: string]: string } = {}; // NEW: Initialize insights
       parsedStrategies.forEach(strategy => {
         initialQualitative[strategy.id] = { priority: 'None', subStrategies: {} };
         strategy.subStrategies.forEach(sub => {
@@ -77,9 +85,11 @@ export const LcdProvider = ({ children }: { children: ReactNode }) => {
         });
         initialRadar.A[strategy.id] = 0; // Default to Poor
         initialRadar.B[strategy.id] = 0; // Default to Poor
+        initialInsights[strategy.id] = ''; // NEW: Initialize each strategy with an empty insight
       });
       setQualitativeEvaluation(initialQualitative);
       setRadarChartData(initialRadar);
+      setRadarInsights(initialInsights); // NEW: Set initial insights
     };
     loadStrategies();
   }, []);
@@ -127,11 +137,14 @@ export const LcdProvider = ({ children }: { children: ReactNode }) => {
         break;
       case 'radarChart':
         const resetRadar: RadarChartData = { A: {}, B: {} };
+        const resetInsights: { [strategyId: string]: string } = {}; // NEW: Reset insights
         strategies.forEach(strategy => {
           resetRadar.A[strategy.id] = 0;
           resetRadar.B[strategy.id] = 0;
+          resetInsights[strategy.id] = ''; // NEW: Reset insights
         });
         setRadarChartData(resetRadar);
+        setRadarInsights(resetInsights); // NEW: Reset insights
         break;
       default:
         console.warn(`Unknown section to reset: ${section}`);
@@ -152,6 +165,8 @@ export const LcdProvider = ({ children }: { children: ReactNode }) => {
         setEvaluationChecklists,
         radarChartData,
         setRadarChartData,
+        radarInsights, // NEW: Provide radarInsights
+        setRadarInsights, // NEW: Provide setRadarInsights
         resetSection,
         getStrategyById,
         getSubStrategyById,

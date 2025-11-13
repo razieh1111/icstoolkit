@@ -71,3 +71,8 @@ export interface RadarChartData {
     [strategyId: string]: number; // 0-4 for Poor to Excellent
   };
 }
+
+export interface RadarInsight {
+  strategyId: string;
+  text: string;
+}
