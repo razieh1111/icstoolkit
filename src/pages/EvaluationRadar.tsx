@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import WipeContentButton from '@/components/WipeContentButton';
 import { useLcd } from '@/context/LcdContext';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
@@ -8,8 +8,15 @@ import { EvaluationLevel } from '@/types/lcd';
 import StrategyInsightBox from '@/components/StrategyInsightBox';
 import { getStrategyPriorityForDisplay } from '@/utils/lcdUtils';
 
+// Define the size of the insight boxes for positioning calculations
+const INSIGHT_BOX_WIDTH = 288; // w-72
+const INSIGHT_BOX_HEIGHT = 224; // h-56
+const MARGIN_BETWEEN_RADAR_AND_BOX = 20; // Fixed margin in pixels
+
 const EvaluationRadar: React.FC = () => {
   const { strategies, evaluationChecklists, setRadarChartData, radarChartData, qualitativeEvaluation, radarInsights, setRadarInsights } = useLcd();
+  const [radarTickCoordinates, setRadarTickCoordinates] = useState<{ [key: string]: { x: number; y: number } }>({});
+  const radarContainerRef = useRef<HTMLDivElement>(null);
 
   // Map EvaluationLevel to a numerical score for the radar chart
   const evaluationToScore: Record<EvaluationLevel, number> = {
@@ -17,7 +24,7 @@ const EvaluationRadar: React.FC = () => {
     'Mediocre': 2,
     'Good': 3,
     'Excellent': 4,
-    'N/A': 0, // N/A will be treated as 0 or not shown
+    'N/A': 0,
     'Yes': 4,
     'Partially': 2.5,
     'No': 1,
@@ -94,21 +101,132 @@ const EvaluationRadar: React.FC = () => {
     }));
   };
 
-  // Define positions for the insight boxes around the radar chart
-  // The parent container is max-w-7xl (1280px) and h-[800px].
-  // The ResponsiveContainer for the radar is width="50%", so it's 640px wide, centered.
-  // This leaves (1280 - 640) / 2 = 320px on each side.
-  // The StrategyInsightBox is w-64 (256px).
-  // So, there's (320 - 256) / 2 = 32px padding on each side of the boxes.
-  const insightBoxPositions: { [key: string]: React.CSSProperties } = {
-    '1': { top: '0', left: '50%', transform: 'translateX(-50%)' }, // Top center
-    '2': { top: '10%', left: 'calc(75% + 32px)' }, // Right side, upper
-    '3': { top: '40%', left: 'calc(75% + 32px)' }, // Right side, middle
-    '4': { top: '70%', left: 'calc(75% + 32px)' }, // Right side, lower
-    '5': { top: '70%', right: 'calc(75% + 32px)' }, // Left side, lower
-    '6': { top: '40%', right: 'calc(75% + 32px)' }, // Left side, middle
-    '7': { top: '10%', right: 'calc(75% + 32px)' }, // Left side, upper
+  // Custom tick formatter to capture coordinates and hide labels
+  const renderPolarAngleAxisTick = (props: any) => {
+    const { x, y, payload } = props;
+    const strategyId = payload.value.split('.')[0]; // Extract strategy ID from "1. Strategy Name"
+    
+    // Store the coordinates for drawing lines later
+    setRadarTickCoordinates(prev => ({
+      ...prev,
+      [strategyId]: { x, y }
+    }));
+
+    return null; // Hide the actual tick label
   };
+
+  // Calculate positions for the insight boxes
+  const getInsightBoxPosition = (strategyId: string, radarCenterX: number, radarCenterY: number, outerRadius: number): React.CSSProperties => {
+    const tick = radarTickCoordinates[strategyId];
+    if (!tick) return {};
+
+    // Calculate the angle of the strategy axis
+    const angleRad = Math.atan2(tick.y - radarCenterY, tick.x - radarCenterX);
+
+    // Calculate the point on the outer edge of the radar
+    const radarEdgeX = radarCenterX + outerRadius * Math.cos(angleRad);
+    const radarEdgeY = radarCenterY + outerRadius * Math.sin(angleRad);
+
+    // Calculate the position for the insight box, adding a fixed margin
+    let boxX = radarEdgeX + MARGIN_BETWEEN_RADAR_AND_BOX * Math.cos(angleRad);
+    let boxY = radarEdgeY + MARGIN_BETWEEN_RADAR_AND_BOX * Math.sin(angleRad);
+
+    // Adjust for box dimensions to center it relative to the axis direction
+    // This is a simplified adjustment; more complex logic might be needed for perfect alignment
+    boxX -= INSIGHT_BOX_WIDTH / 2;
+    boxY -= INSIGHT_BOX_HEIGHT / 2;
+
+    // Specific adjustments for each strategy to place them logically
+    // Strategy 1 (top)
+    if (strategyId === '1') {
+      boxX = radarCenterX - INSIGHT_BOX_WIDTH / 2;
+      boxY = radarCenterY - outerRadius - MARGIN_BETWEEN_RADAR_AND_BOX - INSIGHT_BOX_HEIGHT;
+    }
+    // Strategy 2 (top-right)
+    else if (strategyId === '2') {
+      boxX = radarCenterX + outerRadius + MARGIN_BETWEEN_RADAR_AND_BOX;
+      boxY = radarCenterY - INSIGHT_BOX_HEIGHT / 2 - (outerRadius * 0.5); // Adjust vertically
+    }
+    // Strategy 3 (bottom-right)
+    else if (strategyId === '3') {
+      boxX = radarCenterX + outerRadius + MARGIN_BETWEEN_RADAR_AND_BOX;
+      boxY = radarCenterY + INSIGHT_BOX_HEIGHT / 2 + (outerRadius * 0.5) - INSIGHT_BOX_HEIGHT; // Adjust vertically
+    }
+    // Strategy 4 (bottom)
+    else if (strategyId === '4') {
+      boxX = radarCenterX - INSIGHT_BOX_WIDTH / 2;
+      boxY = radarCenterY + outerRadius + MARGIN_BETWEEN_RADAR_AND_BOX;
+    }
+    // Strategy 5 (bottom-left)
+    else if (strategyId === '5') {
+      boxX = radarCenterX - outerRadius - MARGIN_BETWEEN_RADAR_AND_BOX - INSIGHT_BOX_WIDTH;
+      boxY = radarCenterY + INSIGHT_BOX_HEIGHT / 2 + (outerRadius * 0.5) - INSIGHT_BOX_HEIGHT; // Adjust vertically
+    }
+    // Strategy 6 (top-left)
+    else if (strategyId === '6') {
+      boxX = radarCenterX - outerRadius - MARGIN_BETWEEN_RADAR_AND_BOX - INSIGHT_BOX_WIDTH;
+      boxY = radarCenterY - INSIGHT_BOX_HEIGHT / 2 - (outerRadius * 0.5); // Adjust vertically
+    }
+    // Strategy 7 (center-left, if it were on the radar)
+    else if (strategyId === '7') {
+      boxX = radarCenterX - outerRadius - MARGIN_BETWEEN_RADAR_AND_BOX - INSIGHT_BOX_WIDTH;
+      boxY = radarCenterY - INSIGHT_BOX_HEIGHT / 2;
+    }
+
+
+    return {
+      position: 'absolute',
+      left: `${boxX}px`,
+      top: `${boxY}px`,
+    };
+  };
+
+  // Calculate line coordinates
+  const getLineCoordinates = (strategyId: string, radarCenterX: number, radarCenterY: number, outerRadius: number) => {
+    const tick = radarTickCoordinates[strategyId];
+    if (!tick) return null;
+
+    const angleRad = Math.atan2(tick.y - radarCenterY, tick.x - radarCenterX);
+
+    const radarEdgeX = radarCenterX + outerRadius * Math.cos(angleRad);
+    const radarEdgeY = radarCenterY + outerRadius * Math.sin(angleRad);
+
+    // Calculate the start point of the line (just outside the radar)
+    const lineStartX = radarCenterX + (outerRadius + 5) * Math.cos(angleRad);
+    const lineStartY = radarCenterY + (outerRadius + 5) * Math.sin(angleRad);
+
+    // Calculate the end point of the line (at the edge of the insight box)
+    let lineEndX, lineEndY;
+
+    // These coordinates need to match the *center* of the side of the box facing the radar
+    // This is a simplified approach, more precise calculation would involve box corners
+    const boxPosition = getInsightBoxPosition(strategyId, radarCenterX, radarCenterY, outerRadius);
+    const boxLeft = parseFloat(boxPosition.left as string);
+    const boxTop = parseFloat(boxPosition.top as string);
+
+    // Determine which side of the box the line should connect to
+    // This logic is simplified and assumes the box is generally "outward" from the radar
+    if (strategyId === '1') { // Top
+      lineEndX = boxLeft + INSIGHT_BOX_WIDTH / 2;
+      lineEndY = boxTop + INSIGHT_BOX_HEIGHT;
+    } else if (strategyId === '2' || strategyId === '3') { // Right
+      lineEndX = boxLeft;
+      lineEndY = boxTop + INSIGHT_BOX_HEIGHT / 2;
+    } else if (strategyId === '4') { // Bottom
+      lineEndX = boxLeft + INSIGHT_BOX_WIDTH / 2;
+      lineEndY = boxTop;
+    } else if (strategyId === '5' || strategyId === '6' || strategyId === '7') { // Left
+      lineEndX = boxLeft + INSIGHT_BOX_WIDTH;
+      lineEndY = boxTop + INSIGHT_BOX_HEIGHT / 2;
+    } else {
+      // Fallback if no specific logic
+      lineEndX = boxLeft + INSIGHT_BOX_WIDTH / 2;
+      lineEndY = boxTop + INSIGHT_BOX_HEIGHT / 2;
+    }
+
+    return { lineStartX, lineStartY, lineEndX, lineEndY };
+  };
+
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md relative min-h-[calc(100vh-200px)] font-roboto">
@@ -118,13 +236,17 @@ const EvaluationRadar: React.FC = () => {
         based on your evaluations in the "Evaluation Checklists" section. Use the text boxes to add insights for each strategy.
       </p>
 
-      <div className="relative max-w-7xl mx-auto h-[800px] flex justify-center items-center"> {/* Increased height and max-width */}
+      <div ref={radarContainerRef} className="relative max-w-7xl mx-auto h-[800px] flex justify-center items-center">
         {strategies.length > 0 ? (
           <>
-            <ResponsiveContainer width="50%" height="100%"> {/* Radar takes 50% width */}
+            <ResponsiveContainer width="50%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
                 <PolarGrid stroke="#e0e0e0" />
-                <PolarAngleAxis dataKey="strategyName" stroke="#333" tick={{ fill: '#333', fontSize: 12, fontFamily: 'Roboto Condensed' }} />
+                <PolarAngleAxis
+                  dataKey="strategyName"
+                  tick={renderPolarAngleAxisTick} // Use custom tick renderer to hide labels and capture coords
+                  stroke="#333"
+                />
                 <PolarRadiusAxis angle={90} domain={[0, 4]} tickCount={5} stroke="#333" tick={{ fill: '#333', fontSize: 10, fontFamily: 'Roboto' }} />
                 <Radar name="Concept A" dataKey="A" stroke="var(--app-concept-a-dark)" fill="var(--app-concept-a-light)" fillOpacity={0.6} />
                 <Radar name="Concept B" dataKey="B" stroke="var(--app-concept-b-dark)" fill="var(--app-concept-b-light)" fillOpacity={0.6} />
@@ -132,21 +254,39 @@ const EvaluationRadar: React.FC = () => {
               </RadarChart>
             </ResponsiveContainer>
 
-            {/* Render StrategyInsightBoxes */}
-            {strategies.map(strategy => {
+            {/* Render StrategyInsightBoxes and connecting lines */}
+            {radarContainerRef.current && strategies.map(strategy => {
               const priority = getStrategyPriorityForDisplay(strategy, qualitativeEvaluation);
-              const positionStyle = insightBoxPositions[strategy.id] || {}; // Get predefined position
+              const radarRect = radarContainerRef.current!.getBoundingClientRect();
+              const radarCenterX = radarRect.width / 2;
+              const radarCenterY = radarRect.height / 2;
+              const outerRadius = radarRect.height * 0.8 / 2; // 80% of half height, matching RadarChart's outerRadius="80%"
+
+              const boxPositionStyle = getInsightBoxPosition(strategy.id, radarCenterX, radarCenterY, outerRadius);
+              const lineCoords = getLineCoordinates(strategy.id, radarCenterX, radarCenterY, outerRadius);
 
               return (
-                <StrategyInsightBox
-                  key={strategy.id}
-                  strategy={strategy}
-                  priority={priority}
-                  text={radarInsights[strategy.id] || ''}
-                  onTextChange={handleInsightTextChange}
-                  className="absolute" // Use absolute positioning
-                  style={positionStyle}
-                />
+                <React.Fragment key={strategy.id}>
+                  <StrategyInsightBox
+                    strategy={strategy}
+                    priority={priority}
+                    text={radarInsights[strategy.id] || ''}
+                    onTextChange={handleInsightTextChange}
+                    style={boxPositionStyle}
+                  />
+                  {lineCoords && (
+                    <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                      <line
+                        x1={lineCoords.lineStartX}
+                        y1={lineCoords.lineStartY}
+                        x2={lineCoords.lineEndX}
+                        y2={lineCoords.lineEndY}
+                        stroke="#888"
+                        strokeWidth="1"
+                      />
+                    </svg>
+                  )}
+                </React.Fragment>
               );
             })}
           </>
