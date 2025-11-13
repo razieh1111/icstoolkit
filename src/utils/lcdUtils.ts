@@ -42,18 +42,30 @@ export const getStrategyPriorityForDisplay = (
 };
 
 /**
- * Returns Tailwind CSS classes for a priority tag based on the given priority level.
+ * Returns Tailwind CSS classes and display text for a priority tag based on the given priority level.
  */
 export const getPriorityTagClasses = (priority: PriorityLevel) => {
+  let displayText: string;
+  let classes: string;
+
   switch (priority) {
     case 'High':
-      return 'bg-red-600 text-white';
+      displayText = 'High priority';
+      classes = 'bg-red-600 text-white';
+      break;
     case 'Mid':
-      return 'bg-yellow-500 text-gray-900';
+      displayText = 'Mid priority';
+      classes = 'bg-orange-400 text-white'; // Changed to orange
+      break;
     case 'Low':
-      return 'bg-blue-500 text-white';
+      displayText = 'Low priority';
+      classes = 'bg-yellow-300 text-gray-800'; // Changed to yellow with dark text
+      break;
     case 'None':
     default:
-      return 'bg-gray-300 text-gray-700';
+      displayText = 'No priority';
+      classes = 'bg-gray-300 text-gray-700';
+      break;
   }
+  return { displayText, classes };
 };

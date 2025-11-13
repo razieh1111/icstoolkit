@@ -249,8 +249,7 @@ const QualitativeEvaluation: React.FC = () => {
       <Tabs defaultValue={filteredStrategies[0]?.id || "no-strategies"} className="w-full">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 h-auto p-2 items-stretch">
           {filteredStrategies.map((strategy) => {
-            const displayPriority = getStrategyPriorityForDisplay(strategy, qualitativeEvaluation);
-            const tagClasses = getPriorityTagClasses(displayPriority);
+            const { displayText, classes } = getPriorityTagClasses(getStrategyPriorityForDisplay(strategy, qualitativeEvaluation));
             return (
               <TabsTrigger
                 key={strategy.id}
@@ -262,9 +261,9 @@ const QualitativeEvaluation: React.FC = () => {
                 {strategy.id}. {strategy.name}
                 <span className={cn(
                   "absolute bottom-1.5 right-1.5 text-xs font-roboto-condensed px-1 rounded-sm", // Adjusted bottom position
-                  tagClasses
+                  classes
                 )}>
-                  {displayPriority}
+                  {displayText}
                 </span>
               </TabsTrigger>
             );
@@ -287,10 +286,10 @@ const QualitativeEvaluation: React.FC = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {/* These items are needed for SelectValue to display the text correctly */}
-                      <SelectItem value="High">High</SelectItem>
-                      <SelectItem value="Mid">Mid</SelectItem>
-                      <SelectItem value="Low">Low</SelectItem>
-                      <SelectItem value="None">None</SelectItem>
+                      <SelectItem value="High">High priority</SelectItem>
+                      <SelectItem value="Mid">Mid priority</SelectItem>
+                      <SelectItem value="Low">Low priority</SelectItem>
+                      <SelectItem value="None">No priority</SelectItem>
                     </SelectContent>
                   </Select>
                 ) : (
@@ -305,10 +304,10 @@ const QualitativeEvaluation: React.FC = () => {
                       <SelectValue placeholder="Select Priority" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="High">High</SelectItem>
-                      <SelectItem value="Mid">Mid</SelectItem>
-                      <SelectItem value="Low">Low</SelectItem>
-                      <SelectItem value="None">None</SelectItem>
+                      <SelectItem value="High">High priority</SelectItem>
+                      <SelectItem value="Mid">Mid priority</SelectItem>
+                      <SelectItem value="Low">Low priority</SelectItem>
+                      <SelectItem value="None">No priority</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
@@ -399,10 +398,10 @@ const QualitativeEvaluation: React.FC = () => {
                                     <SelectValue placeholder="Select Priority" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="High">High</SelectItem>
-                                    <SelectItem value="Mid">Mid</SelectItem>
-                                    <SelectItem value="Low">Low</SelectItem>
-                                    <SelectItem value="None">None</SelectItem>
+                                    <SelectItem value="High">High priority</SelectItem>
+                                    <SelectItem value="Mid">Mid priority</SelectItem>
+                                    <SelectItem value="Low">Low priority</SelectItem>
+                                    <SelectItem value="None">No priority</SelectItem>
                                   </SelectContent>
                                 </Select>
                               </div>
@@ -472,10 +471,10 @@ const QualitativeEvaluation: React.FC = () => {
                                     <SelectValue placeholder="Select Priority" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="High">High</SelectItem>
-                                    <SelectItem value="Mid">Mid</SelectItem>
-                                    <SelectItem value="Low">Low</SelectItem>
-                                    <SelectItem value="None">None</SelectItem>
+                                    <SelectItem value="High">High priority</SelectItem>
+                                    <SelectItem value="Mid">Mid priority</SelectItem>
+                                    <SelectItem value="Low">Low priority</SelectItem>
+                                    <SelectItem value="None">No priority</SelectItem>
                                   </SelectContent>
                                 </Select>
                               </div>
@@ -525,10 +524,10 @@ const QualitativeEvaluation: React.FC = () => {
                                   <SelectValue placeholder="Select Priority" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="High">High</SelectItem>
-                                  <SelectItem value="Mid">Mid</SelectItem>
-                                  <SelectItem value="Low">Low</SelectItem>
-                                  <SelectItem value="None">None</SelectItem>
+                                  <SelectItem value="High">High priority</SelectItem>
+                                  <SelectItem value="Mid">Mid priority</SelectItem>
+                                  <SelectItem value="Low">Low priority</SelectItem>
+                                  <SelectItem value="None">No priority</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>

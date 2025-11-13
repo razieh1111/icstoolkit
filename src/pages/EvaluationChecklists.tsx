@@ -211,8 +211,7 @@ const EvaluationChecklists: React.FC = () => {
       {currentChecklistLevel === 'Simplified' ? (
         <div className="space-y-8 mt-6 pt-4">
           {allStrategies.map((strategy) => {
-            const displayPriority = getStrategyPriorityForDisplay(strategy, qualitativeEvaluation);
-            const tagClasses = getPriorityTagClasses(displayPriority);
+            const { displayText, classes } = getPriorityTagClasses(getStrategyPriorityForDisplay(strategy, qualitativeEvaluation));
             return (
               <div key={strategy.id} className="border-t pt-6 first:border-t-0 first:pt-0">
                 <div className="flex flex-col mb-4">
@@ -220,9 +219,9 @@ const EvaluationChecklists: React.FC = () => {
                     <h3 className="text-xl font-palanquin font-semibold text-app-header flex items-center gap-2">
                       <span className={cn(
                         "text-xs font-roboto-condensed px-1 rounded-sm",
-                        tagClasses
+                        classes
                       )}>
-                        {displayPriority}
+                        {displayText}
                       </span>
                       {strategy.id}. {strategy.name}
                     </h3>
@@ -252,8 +251,7 @@ const EvaluationChecklists: React.FC = () => {
               evaluationChecklists[selectedConcept]?.subStrategies[ss.id] || 'N/A'
             );
             const calculatedStrategyAverage = calculateAggregateEvaluation(subStrategyEvals);
-            const displayPriority = getStrategyPriorityForDisplay(strategy, qualitativeEvaluation);
-            const tagClasses = getPriorityTagClasses(displayPriority);
+            const { displayText, classes } = getPriorityTagClasses(getStrategyPriorityForDisplay(strategy, qualitativeEvaluation));
 
             return (
               <div key={strategy.id} className="border-t pt-6 first:border-t-0 first:pt-0">
@@ -263,9 +261,9 @@ const EvaluationChecklists: React.FC = () => {
                     <h3 className="text-xl font-palanquin font-semibold text-app-header flex items-center gap-2">
                       <span className={cn(
                         "text-xs font-roboto-condensed px-1 rounded-sm",
-                        tagClasses
+                        classes
                       )}>
-                        {displayPriority}
+                        {displayText}
                       </span>
                       {strategy.id}. {strategy.name}
                     </h3>
@@ -300,8 +298,7 @@ const EvaluationChecklists: React.FC = () => {
         <Tabs value={selectedStrategyTab} onValueChange={setSelectedStrategyTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 h-auto p-2 items-stretch">
             {allStrategies.map((strategy) => {
-              const displayPriority = getStrategyPriorityForDisplay(strategy, qualitativeEvaluation);
-              const tagClasses = getPriorityTagClasses(displayPriority);
+              const { displayText, classes } = getPriorityTagClasses(getStrategyPriorityForDisplay(strategy, qualitativeEvaluation));
               return (
                 <TabsTrigger
                   key={strategy.id}
@@ -313,9 +310,9 @@ const EvaluationChecklists: React.FC = () => {
                   {strategy.id}. {strategy.name}
                   <span className={cn(
                     "absolute bottom-1.5 right-1.5 text-xs font-roboto-condensed px-1 rounded-sm", // Adjusted bottom position
-                    tagClasses
+                    classes
                   )}>
-                    {displayPriority}
+                    {displayText}
                   </span>
                 </TabsTrigger>
               );

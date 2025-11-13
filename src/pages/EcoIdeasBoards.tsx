@@ -62,8 +62,7 @@ const EcoIdeasBoards: React.FC = () => {
       <Tabs value={selectedStrategyId} onValueChange={setSelectedStrategyId} className="w-full">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 h-auto p-2 items-stretch">
           {strategies.map((strategy) => {
-            const displayPriority = getStrategyPriorityForDisplay(strategy, qualitativeEvaluation);
-            const tagClasses = getPriorityTagClasses(displayPriority);
+            const { displayText, classes } = getPriorityTagClasses(getStrategyPriorityForDisplay(strategy, qualitativeEvaluation));
             return (
               <TabsTrigger
                 key={strategy.id}
@@ -75,9 +74,9 @@ const EcoIdeasBoards: React.FC = () => {
                 {strategy.id}. {strategy.name}
                 <span className={cn(
                   "absolute bottom-1.5 right-1.5 text-xs font-roboto-condensed px-1 rounded-sm", // Adjusted bottom position
-                  tagClasses
+                  classes
                 )}>
-                  {displayPriority}
+                  {displayText}
                 </span>
               </TabsTrigger>
             );
