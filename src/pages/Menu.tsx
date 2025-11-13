@@ -19,15 +19,18 @@ const Menu: React.FC = () => {
       <p className="text-xl text-app-body-text mb-12 text-center max-w-2xl">
         Welcome to your toolkit for practicing Life Cycle Design. Select a section below to get started.
       </p>
-      {/* Removed max-w-md and w-full from this div to allow buttons to size based on content */}
+      {/* This outer div centers the entire block of buttons */}
       <div className="flex flex-col gap-4 items-center"> 
-        {menuItems.map((item) => (
-          <Button asChild key={item.path} className="h-auto p-4 text-lg text-center bg-app-accent hover:bg-app-accent/90 text-white font-roboto-condensed max-w-full">
-            <Link to={item.path} className="whitespace-normal flex-grow flex items-center justify-center px-4"> {/* Added px-4 for internal padding */}
-              {item.label}
-            </Link>
-          </Button>
-        ))}
+        {/* This inner div will size itself to the widest button, and its children (buttons) will fill it */}
+        <div className="flex flex-col gap-4 w-full max-w-fit"> 
+          {menuItems.map((item) => (
+            <Button asChild key={item.path} className="h-auto p-4 text-lg text-center bg-app-accent hover:bg-app-accent/90 text-white font-roboto-condensed w-full">
+              <Link to={item.path} className="whitespace-normal flex-grow flex items-center justify-center px-4">
+                {item.label}
+              </Link>
+            </Button>
+          ))}
+        </div>
       </div>
 
       {/* LeNSlab Logo */}
