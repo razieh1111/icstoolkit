@@ -1,146 +1,104 @@
 ## 1.1
-- Is the product/system designed to be easily disassembled?
-- Are components designed for easy separation of materials?
-- Are fasteners minimized or designed for easy removal (e.g., snap-fits, standard screws)?
-- Is the product designed to avoid permanent joining methods (e.g., welding, strong adhesives)?
+- Is the (system) product highly material-intensive (oversized)?
+- If the (system) product is a means of transport or requires transport during use, is it oversized?
 
 ## 1.2
-- Are components made from a single material or easily separable materials?
-- Are materials clearly identified for sorting and recycling?
-- Is the use of hazardous materials minimized or eliminated?
-- Are recycled or renewable materials used where possible?
+- Does the (system) product generate a large amount of waste and/or scrap?
 
 ## 1.3
-- Are components designed for easy cleaning and maintenance?
-- Are wear parts easily replaceable?
-- Is modular design used to allow for upgrades or repairs?
-- Is the product designed for easy access to internal components for servicing?
+- Is the packaging highly material-intensive (oversized)?
 
 ## 1.4
-- Is the product designed for durability and longevity?
-- Are high-quality, robust materials used?
-- Is the product protected from common failure modes (e.g., corrosion, impact)?
-- Is the product designed to be aesthetically timeless or adaptable?
+- Does the (system) product consume large amounts of natural resources/materials during use?
 
 ## 1.5
-- Are components standardized or interchangeable across different product versions or models?
-- Are common off-the-shelf components used?
-- Does the design allow for easy sourcing of spare parts?
+- Is the (system) product unable to adapt consumption to different types of use?
 
 ## 2.1
-- Is the product designed to minimize material input (e.g., lightweighting, hollow structures)?
-- Is material efficiency optimized through design (e.g., nesting, additive manufacturing)?
-- Are material scraps minimized during production?
+- Is the (system) product and/or its packaging oversized in weight and/or volume?
 
 ## 2.2
-- Is the product designed to minimize energy consumption during its use phase?
-- Are energy-efficient components or technologies integrated?
-- Is passive design used to reduce energy needs (e.g., natural ventilation, insulation)?
-- Is the product designed for efficient energy recovery at end-of-life?
+- Does the (system) product consume large amounts of energy?
+- Does the (system) product fail to use the most efficient energy conversion and transfer technologies?
+- Does the (system) product use low-efficiency insulation technology?
 
 ## 2.3
-- Is the product designed to minimize water consumption during its use phase?
-- Are water-efficient components or technologies integrated?
-- Is water recycling or reuse considered in the product system?
-
-## 2.4
-- Is the product designed to minimize the use of hazardous substances?
-- Are alternative, safer materials or processes used?
-- Is there clear labeling for safe handling and disposal of any hazardous components?
+- Is the (system) product not enabled to adapt energy consumption to different types of use?
 
 ## 3.1
-- Is the product designed to use renewable energy sources (e.g., solar, wind)?
-- Is the product compatible with renewable energy infrastructure?
-- Is the energy consumption of the product offset by renewable energy generation?
+- Are there any materials and/or additives in the product (system) that are recognized/classified as toxic/harmful and replaceable?
+- Are there any manufacturing, assembly, or finishing processes in the product (system) that are recognized/classified as toxic/harmful and replaceable?
+- Are there any materials and/or manufacturing processes in the packaging that are recognized/classified as toxic/harmful and replaceable?
+- Does the product (system) adopt disposal processes that are recognized/classified as toxic/harmful and replaceable?
 
 ## 3.2
-- Is the product designed to use recycled materials?
-- Is the percentage of recycled content maximized?
-- Are materials sourced from certified sustainable suppliers?
-
-## 3.3
-- Is the product designed to use bio-based or biodegradable materials?
-- Are these materials sourced sustainably?
-- Is the product designed for composting or biological degradation at end-of-life?
+- Are transport systems used for the product (system) that utilize energy resources and/or release emissions recognized/classified as toxic/harmful, and are they replaceable?
+- Does the product (system) in use adopt energy resources recognized/classified as toxic/harmful, and are they replaceable?
 
 ## 4.1
-- Is the product designed for easy repair by users or local repair services?
-- Are repair instructions and spare parts readily available?
-- Is the product designed to be easily upgraded or refurbished?
+- Is the product (system) manufactured using depleting and/or less renewable materials?
+- Is the packaging manufactured using depleting and/or less renewable materials?
+- Are the product (system) or any potentially compostable parts made of non-biodegradable materials?
 
 ## 4.2
-- Is the product designed for easy remanufacturing?
-- Are components designed to withstand multiple life cycles?
-- Is there a system for collecting and returning products for remanufacturing?
-
-## 4.3
-- Is the product designed for easy recycling of its materials?
-- Are materials compatible with existing recycling infrastructure?
-- Is the product designed to avoid contamination of recyclable streams?
+- Is part of the energy consumed during use produced from depleting and/or non-renewable energy sources (e.g., fossil fuels)?
 
 ## 5.1
-- Does the product offer a service instead of ownership (e.g., product-as-a-service)?
-- Is the product designed for multiple users or shared access?
-- Does the business model support extended product life through maintenance and upgrades?
+- Does the product, or any of its components, have a short useful life?
 
 ## 5.2
-- Does the product encourage user behavior that extends its lifespan (e.g., proper care, timely maintenance)?
-- Does the product provide feedback on its environmental performance?
-- Does the product facilitate sharing or second-hand use?
+- Does the product, or any of its components, tend to become damaged, deteriorate, or break prematurely?
+
+## 5.3
+- Does the product, or any of its components, tend to become technologically obsolete?
+
+## 5.4
+- Is the product, or any of its components, difficult to store, maintain, repair, and/or upgrade?
+
+## 5.5
+- Is the product, or any of its components, single-use (excluding consumable products)?
+
+## 5.6
+- Is the product, or any of its components, used individually when it could be shared?
+
+## 5.7
+- Does the product, or any of its components, tend to become culturally or aesthetically obsolete?
+
+## 5.8
+- Does the product, or any of its components, tend not to be used for extended periods?
 
 ## 6.1
-- Does the product design consider social impacts throughout its life cycle?
-- Are fair labor practices ensured in the supply chain?
-- Does the product contribute to local economies or communities?
+- Does the (system) product generate large amounts of waste destined for landfill/incineration at the end of its life cycle?
 
 ## 6.2
-- Does the product promote health and safety for users and workers?
-- Are ergonomic principles applied in design?
-- Is the product free from harmful chemicals or emissions?
+- Do some/all pre-production and/or production wastes end up in landfill/incineration?
 
 ## 6.3
-- Does the product contribute to cultural value or heritage?
-- Does it respect local traditions and contexts?
-- Does it avoid cultural appropriation?
+- Do some/all wastes produced during use end up in landfill/incineration?
+
+## 6.4
+- Does part/all of the packaging end up in landfill/incineration?
+
+## 6.5
+
+## 6.6
+
+## 6.7
+
+## 6.8
 
 ## 7.1
-- Is the product designed to be adaptable to changing user needs or environments?
-- Can it be reconfigured or repurposed?
-- Does it support modularity for future expansion?
 
 ## 7.2
-- Does the product design incorporate smart technologies for efficiency or user experience?
-- Does it use data to optimize performance or resource use?
-- Is it part of a larger interconnected system?
 
 ## 7.3
-- Does the product design integrate natural processes or biomimicry?
-- Does it mimic natural forms, processes, or ecosystems?
-- Does it contribute to ecological restoration or regeneration?
 
 ## 7.4
-- Does the product design promote local production and consumption?
-- Are materials sourced locally?
-- Is manufacturing done regionally?
 
 ## 7.5
-- Does the product design foster collaboration and co-creation?
-- Does it involve users or stakeholders in the design process?
-- Does it support open-source principles?
 
 ## 7.6
-- Does the product design address systemic issues beyond the product itself?
-- Does it challenge existing consumption patterns?
-- Does it promote a circular economy at a broader level?
 
 ## 7.7
-- Is the product designed to be easily disassembled?
-- Are components designed for easy separation of materials?
-- Are fasteners minimized or designed for easy removal (e.g., snap-fits, standard screws)?
-- Is the product designed to avoid permanent joining methods (e.g., welding, strong adhesives)?
 
 ## 7.8
-- Are components made from a single material or easily separable materials?
-- Are materials clearly identified for sorting and recycling?
-- Is the use of hazardous materials minimized or eliminated?
-- Are recycled or renewable materials used where possible?
