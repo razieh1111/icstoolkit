@@ -145,6 +145,23 @@ const EvaluationRadar: React.FC = () => {
       <div className="relative max-w-7xl mx-auto h-[800px] flex justify-center items-center"> {/* Increased height and max-width */}
         {strategies.length > 0 ? (
           <>
+            <ResponsiveContainer width="50%" height="100%"> {/* Radar takes 50% width */}
+              <RadarChart cx="50%" cy="42%" outerRadius="80%" data={data}> {/* Adjusted cy to 42% */}
+                <PolarGrid stroke="#e0e0e0" />
+                <PolarAngleAxis tick={false} />
+                <PolarRadiusAxis
+                  angle={90}
+                  domain={[0, 4]}
+                  tickCount={5}
+                  stroke="#333"
+                  tick={CustomRadiusTick} // Use the custom tick component
+                />
+                <Radar name="Concept A" dataKey="A" stroke="var(--app-concept-a-dark)" fill="var(--app-concept-a-light)" fillOpacity={0.6} />
+                <Radar name="Concept B" dataKey="B" stroke="var(--app-concept-b-dark)" fill="var(--app-concept-b-light)" fillOpacity={0.6} />
+                <Legend />
+              </RadarChart>
+            </ResponsiveContainer>
+
             {/* Render StrategyInsightBoxes */}
             {strategies.map(strategy => {
               const priority = getStrategyPriorityForDisplay(strategy, qualitativeEvaluation);
@@ -162,24 +179,6 @@ const EvaluationRadar: React.FC = () => {
                 />
               );
             })}
-            {/* Spacer block */}
-            <div className="w-full h-8"></div> {/* Empty div for spacer */}
-            <ResponsiveContainer width="50%" height="100%"> {/* Radar takes 50% width */}
-              <RadarChart cx="50%" cy="42%" outerRadius="80%" data={data}> {/* Adjusted cy to 42% */}
-                <PolarGrid stroke="#e0e0e0" />
-                <PolarAngleAxis tick={false} />
-                <PolarRadiusAxis
-                  angle={90}
-                  domain={[0, 4]}
-                  tickCount={5}
-                  stroke="#333"
-                  tick={CustomRadiusTick} // Use the custom tick component
-                />
-                <Radar name="Concept A" dataKey="A" stroke="var(--app-concept-a-dark)" fill="var(--app-concept-a-light)" fillOpacity={0.6} />
-                <Radar name="Concept B" dataKey="B" stroke="var(--app-concept-b-dark)" fill="var(--app-concept-b-light)" fillOpacity={0.6} />
-                <Legend />
-              </RadarChart>
-            </ResponsiveContainer>
           </>
         ) : (
           <p className="text-app-body-text">Loading strategies...</p>
