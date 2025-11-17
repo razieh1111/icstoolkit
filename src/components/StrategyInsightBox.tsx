@@ -11,6 +11,8 @@ interface StrategyInsightBoxProps {
   priority: PriorityLevel;
   text: string;
   onTextChange: (strategyId: string, newText: string) => void;
+  className?: string; // For positioning
+  style?: React.CSSProperties; // For inline styles like top, left, transform
 }
 
 const StrategyInsightBox: React.FC<StrategyInsightBoxProps> = ({
@@ -18,14 +20,17 @@ const StrategyInsightBox: React.FC<StrategyInsightBoxProps> = ({
   priority,
   text,
   onTextChange,
+  className,
+  style
 }) => {
   const { displayText, classes } = getPriorityTagClasses(priority);
 
   return (
     <div className={cn(
       "bg-white p-3 rounded-lg shadow-md border border-gray-200 flex flex-col",
-      "w-72 h-48"
-    )}>
+      "w-72 h-48", // Changed width from w-64 to w-72
+      className
+    )} style={style}>
       <div className="flex items-center mb-2">
         <span className={cn(
           "text-xs font-roboto-condensed px-1 rounded-sm mr-2",
