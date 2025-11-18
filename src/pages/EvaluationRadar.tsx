@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import WipeContentButton from '@/components/WipeContentButton';
 import { useLcd } from '@/context/LcdContext';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
@@ -32,6 +32,36 @@ const CustomRadiusTick = ({ x, y, payload }: any) => {
     </g>
   );
 };
+
+interface CustomAngleAxisTickProps {
+  x: number;
+  y: number;
+  payload: {
+    value: string;
+  };
+  setRadarLabelSvgPositions: React.Dispatch<React.SetStateAction<Record<string, { x: number; y: number }>>>;
+}
+
+// Custom Tick component for PolarAngleAxis to capture label positions
+const CustomAngleAxisTick: React.FC<CustomAngleAxisTickProps> = ({ x, y, payload, setRadarLabelSvgPositions }) => {
+  const strategyId = payload.value.split('.')[0]; // Extract '1' from '1. Strategy Name'
+  
+  useEffect(() => {
+    setRadarLabelSvgPositions(prev => ({
+      ...prev,
+      [strategyId]: { x, y },
+    }));
+  }, [x, y, strategyId, setRadarLabelSvgPositions]);
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text x={0} y={0} dy={4} textAnchor="middle" fill="#333" fontSize={12} fontFamily="Roboto">
+        {payload.value}
+      </text>
+    </g>
+  );
+};
+
 
 const EvaluationRadar: React.FC = () => {
   const { strategies, evaluationChecklists, setRadarChartData, radarChartData, qualitativeEvaluation, radarInsights, setRadarInsights } = useLcd();
@@ -127,26 +157,6 @@ const EvaluationRadar: React.FC = () => {
       [strategyId]: newText,
     }));
   };
-
-  // Custom Tick component for PolarAngleAxis to capture label positions
-  const CustomAngleAxisTick = useCallback(({ x, y, payload }: any) => {
-    const strategyId = payload.value.split('.')[0]; // Extract '1' from '1. Strategy Name'
-    
-    useEffect(() => {
-      setRadarLabelSvgPositions(prev => ({
-        ...prev,
-        [strategyId]: { x, y },
-      }));
-    }, [x, y, strategyId]);
-
-    return (
-      <g transform={`translate(${x},${y})`}>
-        <text x={0} y={0} dy={4} textAnchor="middle" fill="#333" fontSize={12} fontFamily="Roboto">
-          {payload.value}
-        </text>
-      </g>
-    );
-  }, []); // No dependencies, as it only captures its own props
 
   // Effect to get the actual SVG element from ResponsiveContainer
   useEffect(() => {
@@ -283,7 +293,7 @@ const EvaluationRadar: React.FC = () => {
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
                 <PolarGrid stroke="#e0e0e0" />
-                <PolarAngleAxis dataKey="strategyName" tick={CustomAngleAxisTick} /> {/* Use custom tick */}
+                <PolarAngleAxis dataKey="strategyName" tick={props => <CustomAngleAxisTick {...props} setRadarLabelSvgPositions={setRadarLabelSvgPositions} />} /> {/* Use custom tick */}
                 <PolarRadiusAxis
                   angle={90}
                   domain={[0, 4]}
