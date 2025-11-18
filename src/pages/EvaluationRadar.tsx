@@ -120,7 +120,8 @@ const EvaluationRadar: React.FC = () => {
 
   // Define the desired order for strategies in the left and right columns
   const leftColumnStrategyIds = ['5', '6', '7'];
-  const rightColumnStrategyIds = ['1', '2', '3', '4']; 
+  // Strategy 1 is now moved above the radar, so it's removed from this list
+  const rightColumnStrategyIds = ['2', '3', '4']; 
 
   const leftColumnStrategies = leftColumnStrategyIds
     .map(id => strategies.find(s => s.id === id))
@@ -130,6 +131,10 @@ const EvaluationRadar: React.FC = () => {
     .map(id => strategies.find(s => s.id === id))
     .filter((s): s is Strategy => s !== undefined);
 
+  // Find Strategy 1 specifically for positioning above the radar
+  const strategy1 = strategies.find(s => s.id === '1');
+  const strategy1Priority = strategy1 ? getStrategyPriorityForDisplay(strategy1, qualitativeEvaluation) : undefined;
+
   return (
     <div className="p-6 bg-white rounded-lg shadow-md relative min-h-[calc(100vh-200px)] font-roboto flex flex-col">
       <h2 className="text-3xl font-palanquin font-semibold text-app-header mb-6">Evaluation Radar</h2>
@@ -137,6 +142,19 @@ const EvaluationRadar: React.FC = () => {
         This radar chart displays the pursuit level of each of the 7 strategies for Concept A and B,
         based on your evaluations in the "Evaluation Checklists" section. Use the text boxes to add insights for each strategy.
       </p>
+
+      {/* Strategy 1 Insight Box - positioned above the radar */}
+      {strategy1 && strategy1Priority && (
+        <div className="w-72 mx-auto mb-8"> {/* Centered with mx-auto, 32px bottom margin with mb-8 */}
+          <StrategyInsightBox
+            key={strategy1.id}
+            strategy={strategy1}
+            priority={strategy1Priority}
+            text={radarInsights[strategy1.id] || ''}
+            onTextChange={handleInsightTextChange}
+          />
+        </div>
+      )}
 
       {/* This div uses flex-grow to push the radar section to the bottom */}
       <div className="flex-grow flex items-end justify-center w-full">
@@ -182,8 +200,7 @@ const EvaluationRadar: React.FC = () => {
             <div className="hidden lg:flex flex-col gap-4 justify-center items-start h-full">
               {rightColumnStrategies.map(strategy => {
                 const priority = getStrategyPriorityForDisplay(strategy, qualitativeEvaluation);
-                // Use the new marginTop prop for Strategy 2
-                const customMarginTop = strategy.id === '2' ? '-16px' : undefined; 
+                // Removed custom marginTop for Strategy 2 as Strategy 1 is no longer directly above it
                 return (
                   <StrategyInsightBox
                     key={strategy.id}
@@ -191,7 +208,7 @@ const EvaluationRadar: React.FC = () => {
                     priority={priority}
                     text={radarInsights[strategy.id] || ''}
                     onTextChange={handleInsightTextChange}
-                    marginTop={customMarginTop} // Pass the custom margin here
+                    marginTop={undefined} // Explicitly set to undefined or remove prop
                   />
                 );
               })}
@@ -200,7 +217,7 @@ const EvaluationRadar: React.FC = () => {
             {/* Stacked Insights for Small Screens (below lg) */}
             {/* Note: On small screens, insights are sorted numerically by strategy ID for consistency. */}
             <div className="lg:hidden flex flex-col gap-4 w-full mt-8">
-              {[...leftColumnStrategies, ...rightColumnStrategies].sort((a, b) => parseInt(a.id) - parseInt(b.id)).map(strategy => {
+              {[...leftColumnStrategies, ...rightColumnStrategies, strategy1].filter((s): s is Strategy => s !== undefined).sort((a, b) => parseInt(a.id) - parseInt(b.id)).map(strategy => {
                 const priority = getStrategyPriorityForDisplay(strategy, qualitativeEvaluation);
                 return (
                   <StrategyInsightBox
