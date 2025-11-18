@@ -2,13 +2,14 @@
 
 import React from 'react';
 
-interface Arrow {
+interface LArrow {
   start: { x: number; y: number };
+  mid: { x: number; y: y }; // Intermediate point for the L-shape
   end: { x: number; y: number };
 }
 
 interface SvgArrowOverlayProps {
-  arrows: Arrow[];
+  arrows: LArrow[];
 }
 
 const SvgArrowOverlay: React.FC<SvgArrowOverlayProps> = ({ arrows }) => {
@@ -30,16 +31,27 @@ const SvgArrowOverlay: React.FC<SvgArrowOverlayProps> = ({ arrows }) => {
         </marker>
       </defs>
       {arrows.map((arrow, index) => (
-        <line
-          key={index}
-          x1={arrow.start.x}
-          y1={arrow.start.y}
-          x2={arrow.end.x}
-          y2={arrow.end.y}
-          stroke="black"
-          strokeWidth="1"
-          markerEnd="url(#arrowhead)"
-        />
+        <g key={index}>
+          {/* First segment of the L-shaped arrow */}
+          <line
+            x1={arrow.start.x}
+            y1={arrow.start.y}
+            x2={arrow.mid.x}
+            y2={arrow.mid.y}
+            stroke="black"
+            strokeWidth="1"
+          />
+          {/* Second segment of the L-shaped arrow with the arrowhead */}
+          <line
+            x1={arrow.mid.x}
+            y1={arrow.mid.y}
+            x2={arrow.end.x}
+            y2={arrow.end.y}
+            stroke="black"
+            strokeWidth="1"
+            markerEnd="url(#arrowhead)"
+          />
+        </g>
       ))}
     </svg>
   );

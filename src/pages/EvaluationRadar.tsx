@@ -73,7 +73,7 @@ const EvaluationRadar: React.FC = () => {
 
   // State to store radar label positions (SVG-relative) and calculated arrows (screen-relative)
   const [radarLabelSvgPositions, setRadarLabelSvgPositions] = useState<Record<string, { x: number; y: number }>>({});
-  const [arrows, setArrows] = useState<{ start: { x: number; y: number }; end: { x: number; y: number } }[]>([]);
+  const [arrows, setArrows] = useState<{ start: { x: number; y: number }; mid: { x: number; y: number }; end: { x: number; y: number } }[]>([]);
 
   // Map EvaluationLevel to a numerical score for the radar chart
   const evaluationToScore: Record<EvaluationLevel, number> = {
@@ -168,10 +168,13 @@ const EvaluationRadar: React.FC = () => {
   // Effect to calculate and update arrows
   useEffect(() => {
     const calculateArrows = () => {
-      const newArrows: { start: { x: number; y: number }; end: { x: number; y: number } }[] = [];
+      const newArrows: { start: { x: number; y: number }; mid: { x: number; y: number }; end: { x: number; y: number } }[] = [];
       const radarSvgRect = radarSvgRef.current?.getBoundingClientRect();
+      const radarChartWrapperRect = radarChartWrapperRef.current?.getBoundingClientRect();
 
-      if (!radarSvgRect) return;
+      if (!radarSvgRect || !radarChartWrapperRect) return;
+
+      const isLargeScreen = window.innerWidth >= 1024; // Tailwind's 'lg' breakpoint
 
       strategies.forEach(strategy => {
         const insightBoxElement = insightBoxRefs.current[strategy.id];
@@ -180,40 +183,60 @@ const EvaluationRadar: React.FC = () => {
         if (insightBoxElement && radarLabelSvgCoords) {
           const insightBoxRect = insightBoxElement.getBoundingClientRect();
 
-          let startX, startY, endX, endY;
+          let startX, startY, endX, endY, midX, midY;
 
           // Convert radar label SVG coordinates to screen coordinates
+          // The radarLabelSvgCoords are relative to the SVG itself.
+          // We need to add the SVG's position relative to the viewport.
           const radarLabelScreenX = radarSvgRect.left + radarLabelSvgCoords.x;
           const radarLabelScreenY = radarSvgRect.top + radarLabelSvgCoords.y;
 
-          // Determine connection points based on strategy ID for better visual flow
-          if (strategy.id === '1') {
-            // Strategy 1: Box above, connect from bottom-center of box to top-center of label
-            startX = insightBoxRect.left + insightBoxRect.width / 2;
-            startY = insightBoxRect.bottom;
-            endX = radarLabelScreenX;
-            endY = radarLabelScreenY - 5; // Slightly above the text
-          } else if (['2', '3', '4'].includes(strategy.id)) {
-            // Strategies 2,3,4: Boxes on right, connect from left-center of box to right-center of label
-            startX = insightBoxRect.left;
-            startY = insightBoxRect.top + insightBoxRect.height / 2;
-            endX = radarLabelScreenX + 5; // Slightly to the right of the text
-            endY = radarLabelScreenY;
-          } else if (['5', '6', '7'].includes(strategy.id)) {
-            // Strategies 5,6,7: Boxes on left, connect from right-center of box to left-center of label
-            startX = insightBoxRect.right;
-            startY = insightBoxRect.top + insightBoxRect.height / 2;
-            endX = radarLabelScreenX - 5; // Slightly to the left of the text
-            endY = radarLabelScreenY;
+          if (isLargeScreen) {
+            // Large screen layout (columns)
+            if (strategy.id === '1') {
+              // Strategy 1: Box above radar
+              startX = insightBoxRect.left + insightBoxRect.width / 2;
+              startY = insightBoxRect.bottom;
+              endX = radarLabelScreenX;
+              endY = radarLabelScreenY - 5; // Slightly above the text
+              midX = startX; // Vertical line down from box
+              midY = endY;   // Then horizontal to label
+            } else if (['2', '3', '4'].includes(strategy.id)) {
+              // Strategies 2,3,4: Boxes on right of radar
+              startX = insightBoxRect.left;
+              startY = insightBoxRect.top + insightBoxRect.height / 2;
+              endX = radarLabelScreenX + 5; // Slightly to the right of the text
+              endY = radarLabelScreenY;
+              midX = endX;   // Horizontal line left from box
+              midY = startY; // Then vertical to label
+            } else if (['5', '6', '7'].includes(strategy.id)) {
+              // Strategies 5,6,7: Boxes on left of radar
+              startX = insightBoxRect.right;
+              startY = insightBoxRect.top + insightBoxRect.height / 2;
+              endX = radarLabelScreenX - 5; // Slightly to the left of the text
+              endY = radarLabelScreenY;
+              midX = endX;   // Horizontal line right from box
+              midY = startY; // Then vertical to label
+            } else {
+              // Fallback for any other strategy (shouldn't happen with current setup)
+              startX = insightBoxRect.left + insightBoxRect.width / 2;
+              startY = insightBoxRect.top + insightBoxRect.height / 2;
+              endX = radarLabelScreenX;
+              endY = radarLabelScreenY;
+              midX = startX;
+              midY = startY;
+            }
           } else {
-            // Fallback for other strategies
-            startX = insightBoxRect.left + insightBoxRect.width / 2;
-            startY = insightBoxRect.top + insightBoxRect.height / 2;
-            endX = radarLabelScreenX;
-            endY = radarLabelScreenY;
+            // Small screen layout (stacked insights below radar)
+            startX = insightBoxRect.left + insightBoxRect.width / 2; // Center of box
+            startY = insightBoxRect.top; // Top of box
+            endX = radarLabelScreenX; // Center of label
+            endY = radarLabelScreenY + 5; // Slightly below label
+            midX = startX; // Vertical line up from box
+            midY = endY;   // Then horizontal to label
           }
 
-          newArrows.push({ start: { x: startX, y: startY }, end: { x: endX, y: endY } });
+          newArrows.push({ start: { x: startX, y: startY }, mid: { x: midX, y: midY }, end: { x: endX, y: endY } });
         }
       });
       setArrows(newArrows);
