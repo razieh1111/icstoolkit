@@ -4,7 +4,7 @@ import React from 'react';
 
 interface LArrow {
   start: { x: number; y: number };
-  mid: { x: number; y: y }; // Intermediate point for the L-shape
+  mid: { x: number; y: number }; // Corrected: 'y: y' changed to 'y: number'
   end: { x: number; y: number };
 }
 
