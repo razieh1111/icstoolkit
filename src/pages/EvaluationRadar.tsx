@@ -145,7 +145,7 @@ const EvaluationRadar: React.FC = () => {
 
       {/* Strategy 1 Insight Box - positioned above the radar */}
       {strategy1 && strategy1Priority && (
-        <div className="w-72 mx-auto mb-3"> {/* Centered with mx-auto, 12px bottom margin with mb-3 */}
+        <div className="w-72 mx-auto mb-2"> {/* Centered with mx-auto, 8px bottom margin with mb-2 */}
           <StrategyInsightBox
             key={strategy1.id}
             strategy={strategy1}
