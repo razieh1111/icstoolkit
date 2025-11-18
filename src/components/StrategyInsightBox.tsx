@@ -1,6 +1,6 @@
 "use client";
 
-import React, { forwardRef } from 'react';
+import React from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { Strategy, PriorityLevel } from '@/types/lcd';
@@ -13,28 +13,26 @@ interface StrategyInsightBoxProps {
   onTextChange: (strategyId: string, newText: string) => void;
   className?: string; // For positioning
   style?: React.CSSProperties; // For inline styles like top, left, transform
-  marginTop?: string; // Optional prop for custom top margin
+  marginTop?: string; // NEW: Optional prop for custom top margin
 }
 
-const StrategyInsightBox = forwardRef<HTMLDivElement, StrategyInsightBoxProps>(({
+const StrategyInsightBox: React.FC<StrategyInsightBoxProps> = ({
   strategy,
   priority,
   text,
   onTextChange,
   className,
   style,
-  marginTop
-}, ref) => {
+  marginTop // NEW: Destructure marginTop
+}) => {
   const { displayText, classes } = getPriorityTagClasses(priority);
 
   return (
-    <div
-      ref={ref} // Add ref here
-      className={cn(
-        "bg-white p-3 rounded-lg shadow-md border border-gray-200 flex flex-col",
-        "w-72 h-48",
-        className
-      )} style={{ ...style, marginTop }}>
+    <div className={cn(
+      "bg-white p-3 rounded-lg shadow-md border border-gray-200 flex flex-col",
+      "w-72 h-48",
+      className
+    )} style={{ ...style, marginTop }}> {/* NEW: Apply marginTop to style */}
       <div className="flex items-center mb-2">
         <span className={cn(
           "text-xs font-roboto-condensed px-1 rounded-sm mr-2",
@@ -54,6 +52,6 @@ const StrategyInsightBox = forwardRef<HTMLDivElement, StrategyInsightBoxProps>((
       />
     </div>
   );
-});
+};
 
 export default StrategyInsightBox;
