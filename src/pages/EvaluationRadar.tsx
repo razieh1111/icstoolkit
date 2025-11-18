@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } => 'react';
 import WipeContentButton from '@/components/WipeContentButton';
 import { useLcd } from '@/context/LcdContext';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
@@ -145,7 +145,7 @@ const EvaluationRadar: React.FC = () => {
 
       {/* Strategy 1 Insight Box - positioned above the radar */}
       {strategy1 && strategy1Priority && (
-        <div className="w-72 mx-auto mb-2"> {/* Centered with mx-auto, 8px bottom margin with mb-2 */}
+        <div className="w-72 mx-auto mb-0"> {/* Centered with mx-auto, 0px bottom margin with mb-0 */}
           <StrategyInsightBox
             key={strategy1.id}
             strategy={strategy1}
