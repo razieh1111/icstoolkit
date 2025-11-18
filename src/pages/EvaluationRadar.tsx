@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import WipeContentButton from '@/components/WipeContentButton';
-import { useLcd } from '@/context/LcdContext';
+import { useLcd } = from '@/context/LcdContext';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
 import { EvaluationLevel } from '@/types/lcd';
 import StrategyInsightBox from '@/components/StrategyInsightBox';
@@ -145,7 +145,7 @@ const EvaluationRadar: React.FC = () => {
 
       {/* Strategy 1 Insight Box - positioned above the radar */}
       {strategy1 && strategy1Priority && (
-        <div className="w-72 mx-auto mb-2"> {/* Centered with mx-auto, 8px bottom margin with mb-2 */}
+        <div className="w-72 mx-auto mb-px"> {/* Centered with mx-auto, 1px bottom margin with mb-px */}
           <StrategyInsightBox
             key={strategy1.id}
             strategy={strategy1}
