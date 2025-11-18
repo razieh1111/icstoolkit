@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import WipeContentButton from '@/components/WipeContentButton';
 import { useLcd } from '@/context/LcdContext';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
 import { EvaluationLevel } from '@/types/lcd';
 import StrategyInsightBox from '@/components/StrategyInsightBox';
 import { getStrategyPriorityForDisplay } from '@/utils/lcdUtils';
+import SvgArrowOverlay from '@/components/SvgArrowOverlay'; // Import the new component
 
 // Custom tick component for the PolarRadiusAxis
 const CustomRadiusTick = ({ x, y, payload }: any) => {
@@ -34,6 +35,15 @@ const CustomRadiusTick = ({ x, y, payload }: any) => {
 
 const EvaluationRadar: React.FC = () => {
   const { strategies, evaluationChecklists, setRadarChartData, radarChartData, qualitativeEvaluation, radarInsights, setRadarInsights } = useLcd();
+
+  // Refs for insight boxes and the radar chart's SVG element
+  const insightBoxRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const radarChartWrapperRef = useRef<HTMLDivElement>(null);
+  const radarSvgRef = useRef<SVGSVGElement | null>(null);
+
+  // State to store radar label positions (SVG-relative) and calculated arrows (screen-relative)
+  const [radarLabelSvgPositions, setRadarLabelSvgPositions] = useState<Record<string, { x: number; y: number }>>({});
+  const [arrows, setArrows] = useState<{ start: { x: number; y: number }; end: { x: number; y: number } }[]>([]);
 
   // Map EvaluationLevel to a numerical score for the radar chart
   const evaluationToScore: Record<EvaluationLevel, number> = {
@@ -118,6 +128,98 @@ const EvaluationRadar: React.FC = () => {
     }));
   };
 
+  // Custom Tick component for PolarAngleAxis to capture label positions
+  const CustomAngleAxisTick = useCallback(({ x, y, payload }: any) => {
+    const strategyId = payload.value.split('.')[0]; // Extract '1' from '1. Strategy Name'
+    
+    useEffect(() => {
+      setRadarLabelSvgPositions(prev => ({
+        ...prev,
+        [strategyId]: { x, y },
+      }));
+    }, [x, y, strategyId]);
+
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text x={0} y={0} dy={4} textAnchor="middle" fill="#333" fontSize={12} fontFamily="Roboto">
+          {payload.value}
+        </text>
+      </g>
+    );
+  }, []); // No dependencies, as it only captures its own props
+
+  // Effect to get the actual SVG element from ResponsiveContainer
+  useEffect(() => {
+    if (radarChartWrapperRef.current) {
+      radarSvgRef.current = radarChartWrapperRef.current.querySelector('svg');
+    }
+  }, [radarChartWrapperRef.current]);
+
+  // Effect to calculate and update arrows
+  useEffect(() => {
+    const calculateArrows = () => {
+      const newArrows: { start: { x: number; y: number }; end: { x: number; y: number } }[] = [];
+      const radarSvgRect = radarSvgRef.current?.getBoundingClientRect();
+
+      if (!radarSvgRect) return;
+
+      strategies.forEach(strategy => {
+        const insightBoxElement = insightBoxRefs.current[strategy.id];
+        const radarLabelSvgCoords = radarLabelSvgPositions[strategy.id];
+
+        if (insightBoxElement && radarLabelSvgCoords) {
+          const insightBoxRect = insightBoxElement.getBoundingClientRect();
+
+          let startX, startY, endX, endY;
+
+          // Convert radar label SVG coordinates to screen coordinates
+          const radarLabelScreenX = radarSvgRect.left + radarLabelSvgCoords.x;
+          const radarLabelScreenY = radarSvgRect.top + radarLabelSvgCoords.y;
+
+          // Determine connection points based on strategy ID for better visual flow
+          if (strategy.id === '1') {
+            // Strategy 1: Box above, connect from bottom-center of box to top-center of label
+            startX = insightBoxRect.left + insightBoxRect.width / 2;
+            startY = insightBoxRect.bottom;
+            endX = radarLabelScreenX;
+            endY = radarLabelScreenY - 5; // Slightly above the text
+          } else if (['2', '3', '4'].includes(strategy.id)) {
+            // Strategies 2,3,4: Boxes on right, connect from left-center of box to right-center of label
+            startX = insightBoxRect.left;
+            startY = insightBoxRect.top + insightBoxRect.height / 2;
+            endX = radarLabelScreenX + 5; // Slightly to the right of the text
+            endY = radarLabelScreenY;
+          } else if (['5', '6', '7'].includes(strategy.id)) {
+            // Strategies 5,6,7: Boxes on left, connect from right-center of box to left-center of label
+            startX = insightBoxRect.right;
+            startY = insightBoxRect.top + insightBoxRect.height / 2;
+            endX = radarLabelScreenX - 5; // Slightly to the left of the text
+            endY = radarLabelScreenY;
+          } else {
+            // Fallback for other strategies
+            startX = insightBoxRect.left + insightBoxRect.width / 2;
+            startY = insightBoxRect.top + insightBoxRect.height / 2;
+            endX = radarLabelScreenX;
+            endY = radarLabelScreenY;
+          }
+
+          newArrows.push({ start: { x: startX, y: startY }, end: { x: endX, y: endY } });
+        }
+      });
+      setArrows(newArrows);
+    };
+
+    // Recalculate on mount, resize, scroll, and when radarLabelSvgPositions or strategies change
+    window.addEventListener('resize', calculateArrows);
+    window.addEventListener('scroll', calculateArrows);
+    calculateArrows(); // Initial calculation
+
+    return () => {
+      window.removeEventListener('resize', calculateArrows);
+      window.removeEventListener('scroll', calculateArrows);
+    };
+  }, [strategies, radarLabelSvgPositions]); // Dependencies for useEffect
+
   // Define the desired order for strategies in the left and right columns
   const leftColumnStrategyIds = ['5', '6', '7'];
   const rightColumnStrategyIds = ['2', '3', '4']; 
@@ -153,6 +255,7 @@ const EvaluationRadar: React.FC = () => {
               priority={strategy1Priority}
               text={radarInsights[strategy1.id] || ''}
               onTextChange={handleInsightTextChange}
+              ref={el => (insightBoxRefs.current[strategy1.id] = el)}
             />
           </div>
         )}
@@ -169,17 +272,18 @@ const EvaluationRadar: React.FC = () => {
                   priority={priority}
                   text={radarInsights[strategy.id] || ''}
                   onTextChange={handleInsightTextChange}
+                  ref={el => (insightBoxRefs.current[strategy.id] = el)}
                 />
               );
             })}
           </div>
 
           {/* Radar Chart (centered) */}
-          <div className="w-full h-[600px] lg:h-[800px] flex items-center justify-center">
+          <div className="w-full h-[600px] lg:h-[800px] flex items-center justify-center" ref={radarChartWrapperRef}>
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
                 <PolarGrid stroke="#e0e0e0" />
-                <PolarAngleAxis dataKey="strategyName" tick={{ fill: '#333', fontSize: 12, fontFamily: 'Roboto' }} />
+                <PolarAngleAxis dataKey="strategyName" tick={CustomAngleAxisTick} /> {/* Use custom tick */}
                 <PolarRadiusAxis
                   angle={90}
                   domain={[0, 4]}
@@ -205,6 +309,7 @@ const EvaluationRadar: React.FC = () => {
                   priority={priority}
                   text={radarInsights[strategy.id] || ''}
                   onTextChange={handleInsightTextChange}
+                  ref={el => (insightBoxRefs.current[strategy.id] = el)}
                   marginTop={undefined}
                 />
               );
@@ -223,6 +328,7 @@ const EvaluationRadar: React.FC = () => {
                   priority={priority}
                   text={radarInsights[strategy.id] || ''}
                   onTextChange={handleInsightTextChange}
+                  ref={el => (insightBoxRefs.current[strategy.id] = el)}
                 />
               );
             })}
@@ -231,6 +337,7 @@ const EvaluationRadar: React.FC = () => {
       </div>
 
       <WipeContentButton sectionKey="radarChart" />
+      <SvgArrowOverlay arrows={arrows} /> {/* Render the arrow overlay */}
     </div>
   );
 };
