@@ -118,70 +118,104 @@ const EvaluationRadar: React.FC = () => {
     }));
   };
 
-  // Define positions for the insight boxes around the radar chart
-  // The parent container is max-w-7xl (1280px) and h-[800px].
-  // The ResponsiveContainer for the radar is width="50%", so it's 640px wide, centered.
-  // This leaves (1280 - 640) / 2 = 320px on each side.
-  // The StrategyInsightBox is w-72 (288px).
-  // So, there's (320 - 288) / 2 = 16px padding on each side of the boxes.
-  const insightBoxPositions: { [key: string]: React.CSSProperties } = {
-    '1': { top: '0', left: '50%', transform: 'translateX(-50%)' }, // Top center
-    '2': { top: '10%', left: 'calc(75% + 16px)' }, // Right side, upper
-    '3': { top: '40%', left: 'calc(75% + 16px)' }, // Right side, middle
-    '4': { top: '70%', left: 'calc(75% + 16px)' }, // Right side, lower
-    '5': { top: '70%', right: 'calc(75% + 16px)' }, // Left side, lower
-    '6': { top: '40%', right: 'calc(75% + 16px)' }, // Left side, middle
-    '7': { top: '10%', right: 'calc(75% + 16px)' }, // Left side, upper
-  };
+  // Define the desired order for strategies in the left and right columns
+  const leftColumnStrategyIds = ['5', '6', '7'];
+  const rightColumnStrategyIds = ['1', '2', '3', '4']; 
+
+  const leftColumnStrategies = leftColumnStrategyIds
+    .map(id => strategies.find(s => s.id === id))
+    .filter((s): s is Strategy => s !== undefined);
+
+  const rightColumnStrategies = rightColumnStrategyIds
+    .map(id => strategies.find(s => s.id === id))
+    .filter((s): s is Strategy => s !== undefined);
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md relative min-h-[calc(100vh-200px)] font-roboto">
+    <div className="p-6 bg-white rounded-lg shadow-md relative min-h-[calc(100vh-200px)] font-roboto flex flex-col">
       <h2 className="text-3xl font-palanquin font-semibold text-app-header mb-6">Evaluation Radar</h2>
       <p className="text-app-body-text mb-4">
         This radar chart displays the pursuit level of each of the 7 strategies for Concept A and B,
         based on your evaluations in the "Evaluation Checklists" section. Use the text boxes to add insights for each strategy.
       </p>
 
-      <div className="relative max-w-7xl mx-auto h-[800px] flex justify-center items-center"> {/* Increased height and max-width */}
+      {/* This div uses flex-grow to push the radar section to the bottom */}
+      <div className="flex-grow flex items-end justify-center w-full">
         {strategies.length > 0 ? (
-          <>
-            <ResponsiveContainer width="50%" height="100%"> {/* Radar takes 50% width */}
-              <RadarChart cx="50%" cy="42%" outerRadius="80%" data={data}> {/* Adjusted cy to 42% */}
-                <PolarGrid stroke="#e0e0e0" />
-                <PolarAngleAxis tick={false} />
-                <PolarRadiusAxis
-                  angle={90}
-                  domain={[0, 4]}
-                  tickCount={5}
-                  stroke="#333"
-                  tick={CustomRadiusTick} // Use the custom tick component
-                />
-                <Radar name="Concept A" dataKey="A" stroke="var(--app-concept-a-dark)" fill="var(--app-concept-a-light)" fillOpacity={0.6} />
-                <Radar name="Concept B" dataKey="B" stroke="var(--app-concept-b-dark)" fill="var(--app-concept-b-light)" fillOpacity={0.6} />
-                <Legend />
-              </RadarChart>
-            </ResponsiveContainer>
+          <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-8 lg:gap-8 items-center lg:items-start">
+            {/* Left Column for Insights (on large screens) */}
+            <div className="hidden lg:flex flex-col gap-4 justify-center items-end h-full">
+              {leftColumnStrategies.map(strategy => {
+                const priority = getStrategyPriorityForDisplay(strategy, qualitativeEvaluation);
+                return (
+                  <StrategyInsightBox
+                    key={strategy.id}
+                    strategy={strategy}
+                    priority={priority}
+                    text={radarInsights[strategy.id] || ''}
+                    onTextChange={handleInsightTextChange}
+                  />
+                );
+              })}
+            </div>
 
-            {/* Render StrategyInsightBoxes */}
-            {strategies.map(strategy => {
-              const priority = getStrategyPriorityForDisplay(strategy, qualitativeEvaluation);
-              const positionStyle = insightBoxPositions[strategy.id] || {}; // Get predefined position
+            {/* Radar Chart (centered) */}
+            <div className="w-full h-[600px] lg:h-[800px] flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
+                  <PolarGrid stroke="#e0e0e0" />
+                  <PolarAngleAxis dataKey="strategyName" tick={{ fill: '#333', fontSize: 12, fontFamily: 'Roboto' }} />
+                  <PolarRadiusAxis
+                    angle={90}
+                    domain={[0, 4]}
+                    tickCount={5}
+                    stroke="#333"
+                    tick={CustomRadiusTick}
+                  />
+                  <Radar name="Concept A" dataKey="A" stroke="var(--app-concept-a-dark)" fill="var(--app-concept-a-light)" fillOpacity={0.6} />
+                  <Radar name="Concept B" dataKey="B" stroke="var(--app-concept-b-dark)" fill="var(--app-concept-b-light)" fillOpacity={0.6} />
+                  <Legend />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
 
-              return (
-                <StrategyInsightBox
-                  key={strategy.id}
-                  strategy={strategy}
-                  priority={priority}
-                  text={radarInsights[strategy.id] || ''}
-                  onTextChange={handleInsightTextChange}
-                  className="absolute" // Use absolute positioning
-                  style={positionStyle}
-                />
-              );
-            })}
-          </>
+            {/* Right Column for Insights (on large screens) */}
+            <div className="hidden lg:flex flex-col gap-4 justify-center items-start h-full">
+              {rightColumnStrategies.map(strategy => {
+                const priority = getStrategyPriorityForDisplay(strategy, qualitativeEvaluation);
+                // Use the new marginTop prop for Strategy 2
+                const customMarginTop = strategy.id === '2' ? '-16px' : undefined; 
+                return (
+                  <StrategyInsightBox
+                    key={strategy.id}
+                    strategy={strategy}
+                    priority={priority}
+                    text={radarInsights[strategy.id] || ''}
+                    onTextChange={handleInsightTextChange}
+                    marginTop={customMarginTop} // Pass the custom margin here
+                  />
+                );
+              })}
+            </div>
+
+            {/* Stacked Insights for Small Screens (below lg) */}
+            {/* Note: On small screens, insights are sorted numerically by strategy ID for consistency. */}
+            <div className="lg:hidden flex flex-col gap-4 w-full mt-8">
+              {[...leftColumnStrategies, ...rightColumnStrategies].sort((a, b) => parseInt(a.id) - parseInt(b.id)).map(strategy => {
+                const priority = getStrategyPriorityForDisplay(strategy, qualitativeEvaluation);
+                return (
+                  <StrategyInsightBox
+                    key={strategy.id}
+                    strategy={strategy}
+                    priority={priority}
+                    text={radarInsights[strategy.id] || ''}
+                    onTextChange={handleInsightTextChange}
+                  />
+                );
+              })}
+            </div>
+          </div>
         ) : (
-          <p className="text-app-body-text">Loading strategies...</p>
+          <p className="text-app-body-text text-center">Loading strategies...</p>
         )}
       </div>
 

@@ -13,6 +13,7 @@ interface StrategyInsightBoxProps {
   onTextChange: (strategyId: string, newText: string) => void;
   className?: string; // For positioning
   style?: React.CSSProperties; // For inline styles like top, left, transform
+  marginTop?: string; // NEW: Optional prop for custom top margin
 }
 
 const StrategyInsightBox: React.FC<StrategyInsightBoxProps> = ({
@@ -21,16 +22,17 @@ const StrategyInsightBox: React.FC<StrategyInsightBoxProps> = ({
   text,
   onTextChange,
   className,
-  style
+  style,
+  marginTop // NEW: Destructure marginTop
 }) => {
   const { displayText, classes } = getPriorityTagClasses(priority);
 
   return (
     <div className={cn(
       "bg-white p-3 rounded-lg shadow-md border border-gray-200 flex flex-col",
-      "w-72 h-48 mt-4", // Added mt-4 for top margin
+      "w-72 h-48",
       className
-    )} style={style}>
+    )} style={{ ...style, marginTop }}> {/* NEW: Apply marginTop to style */}
       <div className="flex items-center mb-2">
         <span className={cn(
           "text-xs font-roboto-condensed px-1 rounded-sm mr-2",
